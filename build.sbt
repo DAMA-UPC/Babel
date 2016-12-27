@@ -1,6 +1,6 @@
-name := "factor-former"
+name := "Babel"
 
-version := "1.0"
+version := "0.0.1-SNAPSHOT"
 
 scalaVersion := "2.12.1"
 
