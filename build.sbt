@@ -2,6 +2,8 @@ name := "Babel"
 
 version := "0.0.1-SNAPSHOT"
 
+organization := "edu.upc.dama"
+
 scalaVersion := "2.12.1"
 
 /*************   DEPENDENCIES   *************/
@@ -49,7 +51,6 @@ scapegoatVersion := "1.3.0"
 
 import com.sksamuel.scapegoat.sbt.ScapegoatSbtPlugin.autoImport.scapegoat
 (test in Test) := ((test in Test) dependsOn scapegoat).value
-
 
 /************    ScalaStyle    **************/
 
