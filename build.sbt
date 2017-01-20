@@ -9,7 +9,7 @@ scalaVersion := "2.12.1"
 /*************   DEPENDENCIES   *************/
 
 libraryDependencies ++= {
-  val catsVersion = "0.8.1"
+  val catsVersion = "0.9.0"
   Seq(
     // https://github.com/typelevel/cats
     "org.typelevel" %% "cats" % catsVersion
