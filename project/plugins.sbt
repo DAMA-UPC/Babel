@@ -9,7 +9,7 @@ addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.3.0")
 // https://github.com/scoverage/sbt-scoverage
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.5.0")
 // https://github.com/codacy/sbt-codacy-coverage
-addSbtPlugin("com.codacy" % "sbt-codacy-coverage" % "1.3.7")
+addSbtPlugin("com.codacy" % "sbt-codacy-coverage" % "1.3.8")
 // https://github.com/sbt/sbt-native-packager
 addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.1.5")
 // https://github.com/puffnfresh/wartremover
