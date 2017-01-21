@@ -18,6 +18,8 @@ addSbtPlugin("org.wartremover" % "sbt-wartremover" % "1.2.1")
 addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "0.8.0")
 // https://github.com/sksamuel/sbt-scapegoat
 addSbtPlugin("com.sksamuel.scapegoat" %% "sbt-scapegoat" % "1.0.4")
+// https://github.com/alexarchambault/coursier
+addSbtPlugin("io.get-coursier" % "sbt-coursier" % "1.0.0-M15")
 
 // ------------- SBT OPTIONS ----------- //
 logLevel := Level.Warn
