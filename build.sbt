@@ -4,17 +4,43 @@ version := "0.0.1-SNAPSHOT"
 
 organization := "edu.upc.dama"
 
-scalaVersion := "2.12.1"
+scalaVersion := "2.11.8"
 
 /*************   DEPENDENCIES   *************/
 
+val shapelessVersion = "2.3.2"
+val scalametaVersion = "1.4.0"
+val scalametaParadiseVersion = "3.0.0-beta4"
+val sourceCodeVersion = "0.1.2"
+val catsVersion = "0.9.0"
+val circeVersion = "0.6.1"
+
 libraryDependencies ++= {
-  val catsVersion = "0.9.0"
   Seq(
+    "com.chuusai" %% "shapeless" % shapelessVersion,
+    // http://scalameta.org/
+    "org.scalameta" %% "scalameta" % scalametaVersion,
+    // https://github.com/lihaoyi/sourcecode
+    "com.lihaoyi" %% "sourcecode" % sourceCodeVersion,
     // https://github.com/typelevel/cats
-    "org.typelevel" %% "cats" % catsVersion
+    "org.typelevel" %% "cats" % catsVersion,
+    // https://github.com/circe/circe
+    "io.circe" %% "circe-core" % circeVersion,
+    "io.circe" %% "circe-generic" % circeVersion,
+    "io.circe" %% "circe-parser" % circeVersion
   )
 }
+
+/*
+resolvers += Resolver.url(
+  name = "scalameta",
+  baseURL = url("http://dl.bintray.com/scalameta/maven")
+)(Resolver.ivyStylePatterns)
+
+*/
+addCompilerPlugin("org.scalameta" % "paradise" % scalametaParadiseVersion cross CrossVersion.full)
+
+scalacOptions += "-Xplugin-require:macroparadise"
 
 /**********  TEST DEPENDENCIES   ************/
 
