@@ -31,13 +31,6 @@ libraryDependencies ++= {
   )
 }
 
-/*
-resolvers += Resolver.url(
-  name = "scalameta",
-  baseURL = url("http://dl.bintray.com/scalameta/maven")
-)(Resolver.ivyStylePatterns)
-
-*/
 addCompilerPlugin("org.scalameta" % "paradise" % scalametaParadiseVersion cross CrossVersion.full)
 
 scalacOptions += "-Xplugin-require:macroparadise"
