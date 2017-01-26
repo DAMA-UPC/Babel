@@ -9,11 +9,11 @@ scalaVersion := "2.11.8"
 /*************   DEPENDENCIES   *************/
 
 val shapelessVersion = "2.3.2"
-val scalametaVersion = "1.4.0"
+val scalametaVersion = "1.5.0"
 val scalametaParadiseVersion = "3.0.0-beta4"
 val sourceCodeVersion = "0.1.2"
 val catsVersion = "0.9.0"
-val circeVersion = "0.6.1"
+val circeVersion = "0.7.0"
 
 libraryDependencies ++= {
   Seq(
@@ -38,7 +38,7 @@ scalacOptions += "-Xplugin-require:macroparadise"
 /**********  TEST DEPENDENCIES   ************/
 
 libraryDependencies ++= {
-  val specs2Version = "3.8.6"
+  val specs2Version = "3.8.7"
   val scalaCheckVersion = "1.13.4"
   Seq(
     // Specs2 Test Framework - https://etorreborre.github.io/specs2/
