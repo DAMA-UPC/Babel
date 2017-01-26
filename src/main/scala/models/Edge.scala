@@ -1,4 +1,4 @@
-package edu.upc.dama.models
+package models
 
 /**
   * Represents a generated graph Edge.

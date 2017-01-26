@@ -1,4 +1,4 @@
-package edu.upc.dama.datasources
+package datasources
 
 case class CassandraDataSource(url : String,
                                user : Option[String],

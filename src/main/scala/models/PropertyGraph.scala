@@ -1,4 +1,4 @@
-package edu.upc.dama.models
+package models
 
 import cats.data.NonEmptyStream
 

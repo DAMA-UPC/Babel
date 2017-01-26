@@ -1,3 +1,3 @@
-package edu.upc.dama.generators
+package generators
 
 trait BabelGenerator[T] extends Generator[T, Long]

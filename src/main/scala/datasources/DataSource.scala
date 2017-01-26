@@ -1,3 +1,3 @@
-package edu.upc.dama.datasources
+package datasources
 
 trait DataSource /* extends PhantomAny */

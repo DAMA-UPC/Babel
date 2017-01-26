@@ -1,4 +1,4 @@
-package edu.upc.dama.schemas
+package schemas
 
 trait BabelSchema[T] {
   def projection : MappedProjection[T]

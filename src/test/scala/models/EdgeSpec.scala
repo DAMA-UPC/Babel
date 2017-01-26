@@ -1,8 +1,8 @@
-package edu.upc.dama.models
+package models
 
 import java.util.UUID
 
-import edu.upc.dama.TestUtils.arbUUID
+import utils.TestUtils.arbUUID
 import org.scalacheck.Arbitrary
 import org.specs2.ScalaCheck
 import org.specs2.mutable.Specification
