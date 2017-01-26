@@ -1,5 +1,7 @@
-// -------- EXTRA REPOSITORIES --------- //
+// --------- EXTRA REPOSITORIES ---------- //
 resolvers += "Typesafe Repository" at "https://repo.typesafe.com/typesafe/releases/"
+resolvers += Resolver.sonatypeRepo("releases")
+resolvers += Resolver.bintrayIvyRepo("scalameta", "maven")
 
 // ----------- SBT PLUGINS -------------- //
 // https://github.com/sbt/sbt-assembly
@@ -16,8 +18,6 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.1.5")
 addSbtPlugin("org.wartremover" % "sbt-wartremover" % "1.2.1")
 // http://www.scalastyle.org/sbt.html
 addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "0.8.0")
-// https://github.com/sksamuel/sbt-scapegoat
-addSbtPlugin("com.sksamuel.scapegoat" %% "sbt-scapegoat" % "1.0.4")
 // https://github.com/alexarchambault/coursier
 addSbtPlugin("io.get-coursier" % "sbt-coursier" % "1.0.0-M15")
 
