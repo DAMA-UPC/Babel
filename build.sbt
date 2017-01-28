@@ -61,7 +61,7 @@ testScalastyle := org.scalastyle.sbt.ScalastylePlugin.scalastyle.in(Test).toTask
 /**************    Modules    ***************/
 
 // Define macros in this project.
-lazy val macros = project.settings(
+lazy val schemas = project.settings(
   dependencies,
   // A dependency on macro paradise 3.x is required to both write and expand
   // new-style macros.  This is similar to how it works for old-style macro
@@ -78,4 +78,4 @@ lazy val macros = project.settings(
 )
 
 // Use macros in this project.
-lazy val core = project.settings(dependencies).dependsOn(macros)
+lazy val core = project.settings(dependencies).dependsOn(schemas)
