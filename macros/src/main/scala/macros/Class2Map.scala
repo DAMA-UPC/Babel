@@ -6,6 +6,9 @@ import scala.meta.Term.Param
 import scala.meta._
 
 /**
+  * Adds a method with name `toMap` that returns the parameters and its
+  * values as a [[scala.collection.immutable.Map]].
+  *
   * Before:
   * {{{
   * @Class2Map
@@ -26,6 +29,9 @@ class Class2Map extends scala.annotation.StaticAnnotation {
 
 object Class2Map {
 
+  /**
+    * Implementation of the [[Class2Map]] annotation.
+    */
   def impl(defn: Stat): Stat = {
       defn match {
         case cls@Defn.Class(_, _, _, Ctor.Primary(_, _, paramss), template) =>
