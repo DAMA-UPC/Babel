@@ -6,7 +6,7 @@ import org.specs2.mutable.Specification
 /**
   * Test the macro [[Class2TypeMap]].
   */
-class Class2TypeMapTest extends Specification with ScalaCheck {
+class Class2TypeMapSpec extends Specification with ScalaCheck {
 
   "Macro annotation expansion" should {
     "work with single parameter classes" in {
