@@ -4,14 +4,20 @@ import scala.annotation.compileTimeOnly
 import scala.collection.immutable.Seq
 import scala.meta._
 
-// Before:
-// @Class2Map
-// class Class2MapExample(a: Int, b: String)(c: List[Int]) {
-// After:
-// class Class2MapExample(a: Int, b: String)(c: List[Int]) {
-//   def toMap: _root_.scala.collection.Map[String, Any] =
-//     _root_.scala.collection.Map(("a", a), ("b", b), ("c", c))
-// }
+/**
+  * Before:
+  * {{{
+  * @Class2Map
+  * class Example(a: Int, b: String)
+  * }}}
+  *
+  * After:
+  * {{{
+  * class Example(a: Int, b: String) {
+  *   def toMap: _root_.scala.collection.Map[String, Any] =
+  *     _root_.scala.collection.Map(("a", a), ("b", b))
+  * }}}
+  */
 @compileTimeOnly("@Class2Map not expanded")
 class Class2Map extends scala.annotation.StaticAnnotation {
   inline def apply(defn: Any): Any = meta {
