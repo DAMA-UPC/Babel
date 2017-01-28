@@ -2,6 +2,7 @@ package macros
 
 import scala.annotation.compileTimeOnly
 import scala.collection.immutable.Seq
+import scala.meta.Defn.Class
 import scala.meta.Term.Param
 import scala.meta._
 
@@ -24,15 +25,31 @@ import scala.meta._
   */
 @compileTimeOnly("@Class2Map not expanded")
 class Class2Map extends scala.annotation.StaticAnnotation {
-  inline def apply(defn: Any): Any = meta(Class2Map.impl(defn))
+  inline def apply(defn: Any): Any = meta(Class2MapImpl.impl(defn)._1)
 }
 
-object Class2Map {
+/**
+  * Companion object of [[Class2Map]].
+  *
+  * Contains the methods used by other macros implemented in this class.
+  */
+private[macros] object Class2Map {
 
   /**
-    * Implementation of the [[Class2Map]] annotation.
+    * Obtains the method inserted by the [[Class2Map]] macro.
     */
-  def impl(defn: Stat): Stat = {
+  def macroMethod(defn: Stat): Defn.Def = Class2MapImpl.impl(defn)._2
+}
+
+/**
+  * Object containing the [[Class2Map]] macro annotation expansion implementation.
+  */
+private object Class2MapImpl {
+
+  /**
+    * Implementation of the [[Class2Map]] macro expansion.
+    */
+  def impl(defn: Stat): (Defn.Class, Defn.Def) = {
     defn match {
       case cls@Defn.Class(_, _, Nil, Ctor.Primary(_, _, paramss), template) =>
         val namesToValues: Seq[Term.Tuple] = paramss.flatten.map {
@@ -41,11 +58,11 @@ object Class2Map {
         }
         val toMapImpl: Term =
           q"_root_.scala.collection.Map[String, Any](..$namesToValues)"
-        val toMap =
+        val method =
           q"def toMap: _root_.scala.collection.Map[String, Any] = $toMapImpl"
-        val templateStats: Seq[Stat] = toMap +: template.stats.getOrElse(Nil)
-        cls.copy(templ = template.copy(stats = Some(templateStats)))
-
+        val templateStats: Seq[Stat] = method +: template.stats.getOrElse(Nil)
+        val implClass: Class = cls.copy(templ = template.copy(stats = Some(templateStats)))
+        (implClass, method)
       case Defn.Class(_, _, tParams, _, _) if tParams.nonEmpty =>
         abort("@Class2Map is not compatible with classes with type parameters")
 
