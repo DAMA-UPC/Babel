@@ -24,7 +24,7 @@ import scala.meta._
   */
 @compileTimeOnly("@Class2TypeMap not expanded")
 class Class2TypeMap extends scala.annotation.StaticAnnotation {
-  inline def apply(defn: Any): Any = meta(Class2TypeMapImpl.impl(defn)._1)
+  inline def apply(defn: Any): Any = meta(Class2TypeMapImpl.impl(defn).expandedClass)
 }
 
 /**
@@ -37,7 +37,7 @@ private[macros] object Class2TypeMap {
   /**
     * Obtains the method inserted by the [[Class2TypeMap]] macro.
     */
-  def macroMethod(defn: Stat): (Defn.Def) = Class2TypeMapImpl.impl(defn)._2
+  def macroMethod(defn: Stat): (Defn.Def) = Class2TypeMapImpl.impl(defn).insertedMethod
 }
 
 /**
@@ -48,7 +48,7 @@ private object Class2TypeMapImpl {
   /**
     * Implementation of the [[Class2TypeMap]] macro annotation expansion.
     */
-  def impl(defn: Stat): (Defn.Class, Defn.Def) = {
+  def impl(defn: Stat): MacroExpansionOutput = {
     defn match {
       case cls@Defn.Class(_, _, Nil, Ctor.Primary(_, _, paramss), template) =>
 
@@ -63,7 +63,7 @@ private object Class2TypeMapImpl {
 
         val templateStats: Seq[Stat] = method +: template.stats.getOrElse(Nil)
 
-        (cls.copy(templ = template.copy(stats = Some(templateStats))), method)
+        MacroExpansionOutput(cls.copy(templ = template.copy(stats = Some(templateStats))), method)
 
       case Defn.Class(_, _, tParams, _, _) if tParams.nonEmpty =>
         abort("@Class2TypeMap is not compatible with classes with type parameters")

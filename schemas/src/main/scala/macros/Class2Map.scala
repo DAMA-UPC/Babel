@@ -25,7 +25,7 @@ import scala.meta._
   */
 @compileTimeOnly("@Class2Map not expanded")
 class Class2Map extends scala.annotation.StaticAnnotation {
-  inline def apply(defn: Any): Any = meta(Class2MapImpl.impl(defn)._1)
+  inline def apply(defn: Any): Any = meta(Class2MapImpl.impl(defn).expandedClass)
 }
 
 /**
@@ -38,7 +38,7 @@ private[macros] object Class2Map {
   /**
     * Obtains the method inserted by the [[Class2Map]] macro.
     */
-  def macroMethod(defn: Stat): Defn.Def = Class2MapImpl.impl(defn)._2
+  def macroMethod(defn: Stat): Defn.Def = Class2MapImpl.impl(defn).insertedMethod
 }
 
 /**
@@ -49,7 +49,7 @@ private object Class2MapImpl {
   /**
     * Implementation of the [[Class2Map]] macro expansion.
     */
-  def impl(defn: Stat): (Defn.Class, Defn.Def) = {
+  def impl(defn: Stat): MacroExpansionOutput = {
     defn match {
       case cls@Defn.Class(_, _, Nil, Ctor.Primary(_, _, paramss), template) =>
         val namesToValues: Seq[Term.Tuple] = paramss.flatten.map {
@@ -62,7 +62,7 @@ private object Class2MapImpl {
           q"def toMap: _root_.scala.collection.Map[String, Any] = $toMapImpl"
         val templateStats: Seq[Stat] = method +: template.stats.getOrElse(Nil)
         val implClass: Class = cls.copy(templ = template.copy(stats = Some(templateStats)))
-        (implClass, method)
+        MacroExpansionOutput(implClass, method)
       case Defn.Class(_, _, tParams, _, _) if tParams.nonEmpty =>
         abort("@Class2Map is not compatible with classes with type parameters")
 
