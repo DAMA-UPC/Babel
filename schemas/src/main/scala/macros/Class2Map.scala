@@ -34,7 +34,7 @@ object Class2Map {
     */
   def impl(defn: Stat): Stat = {
     defn match {
-      case cls@Defn.Class(_, _, _, Ctor.Primary(_, _, paramss), template) =>
+      case cls@Defn.Class(_, _, Nil, Ctor.Primary(_, _, paramss), template) =>
         val namesToValues: Seq[Term.Tuple] = paramss.flatten.map {
           (param: Param) =>
             q"(${param.name.syntax}, ${Term.Name(param.name.value)})"
@@ -45,6 +45,10 @@ object Class2Map {
           q"def toMap: _root_.scala.collection.Map[String, Any] = $toMapImpl"
         val templateStats: Seq[Stat] = toMap +: template.stats.getOrElse(Nil)
         cls.copy(templ = template.copy(stats = Some(templateStats)))
+
+      case Defn.Class(_, _, tParams, _, _) if tParams.nonEmpty =>
+        abort("@Class2Map is not compatible with classes with type parameters")
+
       case _ =>
         println(defn.structure)
         abort("@Class2Map must annotate a class.")
