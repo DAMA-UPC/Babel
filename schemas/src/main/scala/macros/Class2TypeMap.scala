@@ -24,15 +24,31 @@ import scala.meta._
   */
 @compileTimeOnly("@Class2TypeMap not expanded")
 class Class2TypeMap extends scala.annotation.StaticAnnotation {
-  inline def apply(defn: Any): Any = meta(Class2TypeMap.impl(defn))
+  inline def apply(defn: Any): Any = meta(Class2TypeMapImpl.impl(defn)._1)
 }
 
-object Class2TypeMap {
+/**
+  * Companion object of [[Class2TypeMap]].
+  *
+  * Contains the methods used by other macros implemented in this class.
+  */
+private[macros] object Class2TypeMap {
 
   /**
-    * Implementation of the [[Class2TypeMap]] macro annotation.
+    * Obtains the method inserted by the [[Class2TypeMap]] macro.
     */
-  def impl(defn: Stat): Stat = {
+  def macroMethod(defn: Stat): (Defn.Def) = Class2TypeMapImpl.impl(defn)._2
+}
+
+/**
+  * Object containing the [[Class2TypeMap]] macro annotation expansion implementation.
+  */
+private object Class2TypeMapImpl {
+
+  /**
+    * Implementation of the [[Class2TypeMap]] macro annotation expansion.
+    */
+  def impl(defn: Stat): (Defn.Class, Defn.Def) = {
     defn match {
       case cls@Defn.Class(_, _, Nil, Ctor.Primary(_, _, paramss), template) =>
 
@@ -41,14 +57,13 @@ object Class2TypeMap {
             val valueType: String = "\"".concat(param.decltpe.map(_.toString()).get).concat("\"")
             q"(${param.name.syntax}, ${Term.Name(valueType)})"
         }
-        val methodImp: Term =
-          q"_root_.scala.collection.Map[String, String](..$namesToValues)"
+        val methodImp: Term = q"_root_.scala.collection.Map[String, String](..$namesToValues)"
 
-        val method = {
-          q"def toTypeMap: _root_.scala.collection.Map[String, String] = $methodImp"
-        }
+        val method = q"def toTypeMap: _root_.scala.collection.Map[String, String] = $methodImp"
+
         val templateStats: Seq[Stat] = method +: template.stats.getOrElse(Nil)
-        cls.copy(templ = template.copy(stats = Some(templateStats)))
+
+        (cls.copy(templ = template.copy(stats = Some(templateStats))), method)
 
       case Defn.Class(_, _, tParams, _, _) if tParams.nonEmpty =>
         abort("@Class2TypeMap is not compatible with classes with type parameters")
