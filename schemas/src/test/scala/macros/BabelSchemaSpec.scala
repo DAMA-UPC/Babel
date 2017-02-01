@@ -9,37 +9,15 @@ import org.specs2.mutable.Specification
 class BabelSchemaSpec extends Specification with ScalaCheck {
 
   "Macro annotation expansion" should {
-    "work with single parameter classes" in {
-      @BabelSchema class Test(value: Int)
-      prop {
-        (expectedValue: Int) =>
-          val testClass = new Test(expectedValue)
-
-          (testClass.toMap must beEqualTo(Map("value" -> expectedValue))) &&
-            (testClass.toTypeMap must beEqualTo(Map("value" -> "Int")))
-      }
+    @BabelSchema class Test(value: Int)
+    "Must expand the macro '@Class2Map'" in {
+      new Test(1).toMap must haveSize(1)
     }
-    "work with multiple parameter classes" in {
-      @BabelSchema class Test(intValue: Int, stringValue: String, floatValue: Float)
-      prop {
-        (intValue: Int, stringValue: String, floatValue: Float) =>
-          val testClass = new Test(intValue, stringValue, floatValue)
-
-          (testClass.toMap must beEqualTo(
-            Map(
-              "intValue" -> intValue,
-              "stringValue" -> stringValue,
-              "floatValue" -> floatValue
-            )
-          )) && (
-            testClass.toTypeMap must beEqualTo(
-              Map(
-                "intValue" -> "Int",
-                "stringValue" -> "String",
-                "floatValue" -> "Float"
-              )
-            ))
-      }
+    "Must expand the macro '@Class2TypeMap'" in {
+      new Test(1).toTypeMap must haveSize(1)
+    }
+    "Must expand the macro '@FromMapApply'" in {
+      Test(Map("value" -> 1)) must beAnInstanceOf[Test]
     }
   }
 }

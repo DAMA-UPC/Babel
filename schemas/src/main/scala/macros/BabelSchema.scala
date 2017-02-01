@@ -23,6 +23,11 @@ import scala.meta._
   *   def toMap: _root_.scala.collection.Map[String, Any] =
   *     _root_.scala.collection.Map[String, Any](("a", a), ("b", b), ("c", c))
   * }
+  *
+  * object Test {
+  *   def apply(m: _root_.scala.collection.Map[String, Any]): Test = {
+  *      new Test(m("a").asInstanceOf[Int], m("b").asInstanceOf[String], m("c").asInstanceOf[Float])
+  * }
   * }}}
   */
 @compileTimeOnly("@BabelSchema not expanded")
@@ -36,7 +41,8 @@ object BabelSchemaImpl {
   private[this] val methodsToExpand: Seq[(Stat) => Stat with Scope] = {
     Seq(
       Class2Map.impl,
-      Class2TypeMap.impl
+      Class2TypeMap.impl,
+      FromMapApply.impl
     )
   }
 
