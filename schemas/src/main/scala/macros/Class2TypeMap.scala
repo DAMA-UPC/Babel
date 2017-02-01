@@ -2,6 +2,7 @@ package macros
 
 import scala.annotation.compileTimeOnly
 import scala.collection.immutable.Seq
+import scala.meta.Defn.Class
 import scala.meta.Term.Param
 import scala.meta._
 
@@ -24,53 +25,38 @@ import scala.meta._
   */
 @compileTimeOnly("@Class2TypeMap not expanded")
 class Class2TypeMap extends scala.annotation.StaticAnnotation {
-  inline def apply(defn: Any): Any = meta(Class2TypeMapImpl.impl(defn).expandedClass)
-}
-
-/**
-  * Companion object of [[Class2TypeMap]].
-  *
-  * Contains the methods used by other macros implemented in this class.
-  */
-private[macros] object Class2TypeMap {
-
-  /**
-    * Obtains the method inserted by the [[Class2TypeMap]] macro.
-    */
-  def macroMethod(defn: Stat): (Defn.Def) = Class2TypeMapImpl.impl(defn).insertedMethod
+  inline def apply(defn: Any): Any = meta(Class2TypeMap.impl(defn))
 }
 
 /**
   * Object containing the [[Class2TypeMap]] macro annotation expansion implementation.
   */
-private object Class2TypeMapImpl {
+object Class2TypeMap {
 
   /**
     * Implementation of the [[Class2TypeMap]] macro annotation expansion.
     */
-  def impl(defn: Stat): MacroExpansionOutput = {
-    defn match {
-      case cls@Defn.Class(_, _, Nil, Ctor.Primary(_, _, paramss), template) =>
+  private[macros] val impl: (Stat) => Class = {
+    case cls@Defn.Class(_, _, Nil, Ctor.Primary(_, _, paramss), template) =>
 
-        val namesToValues: Seq[Term.Tuple] = paramss.flatten.map {
-          (param: Param) =>
-            val valueType: String = "\"".concat(param.decltpe.map(_.toString()).get).concat("\"")
-            q"(${param.name.syntax}, ${Term.Name(valueType)})"
-        }
-        val methodImp: Term = q"_root_.scala.collection.Map[String, String](..$namesToValues)"
+      val namesToValues: Seq[Term.Tuple] = paramss.flatten.map {
+        (param: Param) =>
+          val valueType: String = "\"".concat(param.decltpe.map(_.toString()).get).concat("\"")
+          q"(${param.name.syntax}, ${Term.Name(valueType)})"
+      }
+      val methodImp: Term = q"_root_.scala.collection.Map[String, String](..$namesToValues)"
 
-        val method = q"def toTypeMap: _root_.scala.collection.Map[String, String] = $methodImp"
+      val method = q"def toTypeMap: _root_.scala.collection.Map[String, String] = $methodImp"
 
-        val templateStats: Seq[Stat] = method +: template.stats.getOrElse(Nil)
+      val templateStats: Seq[Stat] = method +: template.stats.getOrElse(Nil)
 
-        MacroExpansionOutput(cls.copy(templ = template.copy(stats = Some(templateStats))), method)
+      cls.copy(templ = template.copy(stats = Some(templateStats)))
 
-      case Defn.Class(_, _, tParams, _, _) if tParams.nonEmpty =>
-        abort("@Class2TypeMap is not compatible with classes with type parameters")
+    case Defn.Class(_, _, tParams, _, _) if tParams.nonEmpty =>
+      abort("@Class2TypeMap is not compatible with classes with type parameters")
 
-      case _ =>
-        println(defn.structure)
-        abort("@Class2TypeMap must annotate a class.")
-    }
+    case defn =>
+      println(defn.structure)
+      abort("@Class2TypeMap must annotate a class.")
   }
 }
