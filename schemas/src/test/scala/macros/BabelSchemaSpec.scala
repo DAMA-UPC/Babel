@@ -19,5 +19,17 @@ class BabelSchemaSpec extends Specification with ScalaCheck {
     "Must expand the macro '@FromMapApply'" in {
       Test(Map("value" -> 1)) must beAnInstanceOf[Test]
     }
+    "Must expand the macro '@SchemaDefinition'" in {
+      Test.definitionJson.noSpaces must beEqualTo(
+        """{"Test":{"type":"object","properties":{"value":"Int"}}}"""
+      )
+      Test.definitionYaml.spaces2.trim must beEqualTo(
+        """Test:
+          |  type: object
+          |  properties:
+          |    value: Int
+        """.stripMargin.trim
+      )
+    }
   }
 }
