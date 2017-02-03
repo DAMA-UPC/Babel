@@ -6,7 +6,7 @@ import scala.meta._
 
 /**
   * Represents a Babel Schema class. This class aggregates the macros [[Class2Map]]
-  * and [[Class2TypeMap]] methods to the input class.
+  * and [[ClassTypeMap]] methods to the input class.
   *
   * Before:
   * {{{
@@ -17,9 +17,6 @@ import scala.meta._
   * After:
   * {{{
   * case class Test(a: Int, b: String, c: Float) {
-  *   def toTypeMap: _root_.scala.collection.Map[String, String] =
-  *     _root_.scala.collection.Map[String, String](("a", "Int"), ("b", "String"), ("c", "Float"))
-  *
   *   def toMap: _root_.scala.collection.Map[String, Any] =
   *     _root_.scala.collection.Map[String, Any](("a", a), ("b", b), ("c", c))
   * }
@@ -27,6 +24,9 @@ import scala.meta._
   * object Test {
   *   def apply(m: _root_.scala.collection.Map[String, Any]): Test = {
   *      new Test(m("a").asInstanceOf[Int], m("b").asInstanceOf[String], m("c").asInstanceOf[Float])
+  *
+  *   def typeMap: _root_.scala.collection.Map[String, String] =
+  *     _root_.scala.collection.Map[String, String](("a", "Int"), ("b", "String"), ("c", "Float"))
   * }
   * }}}
   */
@@ -41,7 +41,7 @@ object BabelSchemaImpl {
   private[this] val methodsToExpand: Seq[(Stat) => Stat with Scope] = {
     Seq(
       Class2Map.impl,
-      Class2TypeMap.impl,
+      ClassTypeMap.impl,
       FromMapApply.impl
     )
   }

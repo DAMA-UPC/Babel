@@ -13,8 +13,8 @@ class BabelSchemaSpec extends Specification with ScalaCheck {
     "Must expand the macro '@Class2Map'" in {
       new Test(1).toMap must haveSize(1)
     }
-    "Must expand the macro '@Class2TypeMap'" in {
-      new Test(1).toTypeMap must haveSize(1)
+    "Must expand the macro '@ClassTypeMap'" in {
+      Test.typeMap must haveSize(1)
     }
     "Must expand the macro '@FromMapApply'" in {
       Test(Map("value" -> 1)) must beAnInstanceOf[Test]
