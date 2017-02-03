@@ -69,14 +69,16 @@ object ClassTypeMap {
 
 
   private[this] def createClass2MapMethod(ctor: Ctor.Primary): Defn.Def = {
+    q"def typeMap: _root_.scala.collection.immutable.Map[String, String] = ${methodBody(ctor)}"
+  }
+
+  private[macros] def methodBody(ctor: Ctor.Primary): Term.Apply = {
 
     val namesToValues: Seq[Term.Tuple] = ctor.paramss.flatten.map {
       (param: Param) =>
         val valueType: String = "\"".concat(param.decltpe.map(_.toString()).get).concat("\"")
         q"(${param.name.syntax}, ${Term.Name(valueType)})"
     }
-    val methodImp: Term = q"_root_.scala.collection.Map[String, String](..$namesToValues)"
-
-    q"def typeMap: _root_.scala.collection.Map[String, String] = $methodImp"
+    q"_root_.scala.collection.immutable.Map[String, String](..$namesToValues)"
   }
 }
