@@ -37,7 +37,7 @@ object FromMapApply {
       defn match {
         case Term.Block(Seq(cls@Defn.Class(_, name, _, ctor, _), companion: Defn.Object)) =>
           // companion object exists
-          val applyMethod = createApply(name, ctor.paramss)
+          val applyMethod = createApply(name, ctor)
           val templateStats: Seq[Stat] =
             applyMethod +: companion.templ.stats.getOrElse(Nil)
           val newCompanion = companion.copy(
@@ -45,7 +45,7 @@ object FromMapApply {
           Term.Block(Seq(cls, newCompanion))
         case cls@Defn.Class(_, name, _, ctor, _) =>
           // companion object does not exists
-          val applyMethod = createApply(name, ctor.paramss)
+          val applyMethod = createApply(name, ctor)
           val companion = q"object ${Term.Name(name.value)} { $applyMethod }"
           Term.Block(Seq(cls, companion))
         case _ =>
@@ -58,12 +58,11 @@ object FromMapApply {
   /**
     * Generates the apply method with all the required assignations.
     */
-  private[this] def createApply(name: Type.Name, paramss: Seq[Seq[Term.Param]]): Defn.Def = {
+  private[this] def createApply(name: Type.Name, ctor: Ctor.Primary): Defn.Def = {
 
     def argAssignations: Seq[Seq[Term.Name]] = {
-      paramss.map(_.map(
+      ctor.paramss.map(_.map(
         (param: Term.Param) => {
-          val argName = Term.Name(param.name.syntax)
           val quotedArgName = Term.Name("\"" + param.name.syntax + "\"")
           val termType = Type.Name(param.decltpe.map(_.toString()).getOrElse("Any"))
           Term.Name(q"m($quotedArgName).asInstanceOf[$termType]".syntax)
