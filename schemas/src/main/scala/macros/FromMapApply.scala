@@ -1,5 +1,6 @@
 package macros
 
+import scala.annotation.compileTimeOnly
 import scala.collection.immutable.Seq
 import scala.meta.Term.Block
 import scala.meta._
@@ -20,6 +21,7 @@ import scala.meta._
   * }
   * }}}
   */
+@compileTimeOnly("@BabelSchema not expanded")
 class FromMapApply extends scala.annotation.StaticAnnotation {
   inline def apply(defn: Any): Any = meta(FromMapApply.impl(defn))
 }
