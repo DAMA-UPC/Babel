@@ -1,4 +1,4 @@
-package macros
+package schema
 
 import org.specs2.ScalaCheck
 import org.specs2.mutable.Specification

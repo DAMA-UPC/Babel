@@ -1,4 +1,4 @@
-package macros
+package schema
 
 import scala.annotation.{compileTimeOnly, tailrec}
 import scala.collection.immutable.Seq
@@ -66,7 +66,7 @@ class BabelSchema extends scala.annotation.StaticAnnotation {
   inline def apply(defn: Any): Any = meta(BabelSchemaImpl.impl(defn))
 }
 
-object BabelSchemaImpl {
+private object BabelSchemaImpl {
 
   private[this] val methodsToExpand: Seq[(Stat) => Stat with Scope] = {
     Seq(
@@ -77,7 +77,7 @@ object BabelSchemaImpl {
     )
   }
 
-  private[macros] def impl(defn: Stat): Stat = {
+  private[schema] def impl(defn: Stat): Stat = {
     @tailrec
     def loopTransform(objectInExpansion: Stat, toExpand: Seq[(Stat) => Stat with Scope]): Stat = {
       toExpand.headOption match {

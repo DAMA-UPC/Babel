@@ -1,4 +1,4 @@
-package macros
+package schema
 
 import scala.annotation.compileTimeOnly
 import scala.collection.immutable.Seq
@@ -24,19 +24,19 @@ import scala.meta._
   * }}}
   */
 @compileTimeOnly("@Class2Map not expanded")
-class Class2Map extends scala.annotation.StaticAnnotation {
+private[schema] class Class2Map extends scala.annotation.StaticAnnotation {
   inline def apply(defn: Any): Any = meta(Class2Map.impl(defn))
 }
 
 /**
   * Object containing the [[Class2Map]] macro annotation expansion implementation.
   */
-object Class2Map {
+private[schema] object Class2Map {
 
   /**
     * Implementation of the [[Class2Map]] macro expansion.
     */
-  private[macros] val impl: (Stat) => Class = {
+  val impl: (Stat) => Class = {
       case cls@Defn.Class(_, _, Nil, Ctor.Primary(_, _, paramss), template) =>
         val namesToValues: Seq[Term.Tuple] = paramss.flatten.map {
           (param: Param) =>

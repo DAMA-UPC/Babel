@@ -1,4 +1,4 @@
-package macros
+package schema
 
 import scala.annotation.compileTimeOnly
 import scala.collection.immutable.Seq
@@ -25,19 +25,19 @@ import scala.meta._
   * }}}
   */
 @compileTimeOnly("@Class2TypeMap not expanded")
-class ClassTypeMap extends scala.annotation.StaticAnnotation {
+private[schema] class ClassTypeMap extends scala.annotation.StaticAnnotation {
   inline def apply(defn: Any): Any = meta(ClassTypeMap.impl(defn))
 }
 
 /**
   * Object containing the [[ClassTypeMap]] macro annotation expansion implementation.
   */
-object ClassTypeMap {
+private[schema] object ClassTypeMap {
 
   /**
     * Implementation of the [[ClassTypeMap]] macro annotation expansion.
     */
-  private[macros] val impl: (Stat) => Block = {
+  val impl: (Stat) => Block = {
     case Term.Block(Seq(cls@Defn.Class(_, name, Nil, ctor, _), companion: Defn.Object)) =>
       // Annotating a class or case class without parameters which already haves
       // a companion object.
@@ -72,7 +72,7 @@ object ClassTypeMap {
     q"def typeMap: _root_.scala.collection.immutable.Map[String, String] = ${methodBody(ctor)}"
   }
 
-  private[macros] def methodBody(ctor: Ctor.Primary): Term.Apply = {
+  private[schema] def methodBody(ctor: Ctor.Primary): Term.Apply = {
 
     val namesToValues: Seq[Term.Tuple] = ctor.paramss.flatten.map {
       (param: Param) =>

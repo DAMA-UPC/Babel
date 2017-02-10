@@ -1,4 +1,4 @@
-package macros
+package schema
 
 import scala.annotation.compileTimeOnly
 import scala.collection.immutable.Seq
@@ -22,19 +22,19 @@ import scala.meta._
   * }}}
   */
 @compileTimeOnly("@BabelSchema not expanded")
-class FromMapApply extends scala.annotation.StaticAnnotation {
+private[schema] class FromMapApply extends scala.annotation.StaticAnnotation {
   inline def apply(defn: Any): Any = meta(FromMapApply.impl(defn))
 }
 
 /**
   * Object containing the [[FromMapApply]] macro annotation expansion implementation.
   */
-object FromMapApply {
+private[schema] object FromMapApply {
 
   /**
     * Implementation of the [[FromMapApply]] macro expansion.
     */
-  private[macros] val impl: (Stat) => Block = {
+  val impl: (Stat) => Block = {
     (defn: Stat) => {
       defn match {
         case Term.Block(Seq(cls@Defn.Class(_, name, _, ctor, _), companion: Defn.Object)) =>
