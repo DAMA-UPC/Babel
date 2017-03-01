@@ -1,4 +1,4 @@
-package schema
+package types.custom.macros
 
 import scala.annotation.compileTimeOnly
 import scala.collection.immutable.Seq
@@ -8,7 +8,7 @@ import scala.meta._
 /**
   * Before:
   * {{{
-  * @SchemaDefinition
+  * @CustomTypeAstGenerator
   * case class Test(a: Int, b: String, c: Float)
   * }}}
   *
@@ -48,22 +48,22 @@ import scala.meta._
   * }}}
   */
 @compileTimeOnly("@BabelSchema not expanded")
-private[schema] class SchemaDefinition extends scala.annotation.StaticAnnotation {
-  inline def apply(defn: Any): Any = meta(SchemaDefinition.impl(defn))
+class CustomTypeAstGenerator extends scala.annotation.StaticAnnotation {
+  inline def apply(defn: Any): Any = meta(CustomTypeAstGenerator.impl(defn))
 }
 
 /**
-  * Object containing the [[SchemaDefinition]] macro annotation expansion implementation.
+  * Object containing the [[CustomTypeAstGenerator]] macro annotation expansion implementation.
   */
-private object SchemaDefinition {
+object CustomTypeAstGenerator {
 
   /**
-    * Implementation of the [[SchemaDefinition]] macro expansion.
+    * Implementation of the [[CustomTypeAstGenerator]] macro expansion.
     */
   val impl: (Stat) => Block = {
     (defn: Stat) => {
       defn match {
-        case block@Term.Block(Seq(cls@Defn.Class(_, name, _, ctor, _), companion: Defn.Object)) =>
+        case Term.Block(Seq(cls@Defn.Class(_, name, _, ctor, _), companion: Defn.Object)) =>
           // companion object exists
           val methodsToAdd : Seq[Defn.Def] = {
             Seq(

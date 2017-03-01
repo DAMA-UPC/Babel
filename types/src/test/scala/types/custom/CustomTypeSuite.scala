@@ -1,15 +1,15 @@
-package schema
+package types.custom
 
 import org.specs2.ScalaCheck
 import org.specs2.mutable.Specification
 
 /**
-  * Test the macro [[Class2Map]].
+  * Test the macro [[CustomType]].
   */
-class BabelSchemaSpec extends Specification with ScalaCheck {
+class CustomTypeSuite extends Specification with ScalaCheck {
 
   "Macro annotation expansion" should {
-    @BabelSchema class Test(value: Int)
+    @CustomType class Test(value: Int)
     "Must expand the macro '@Class2Map'" in {
       new Test(1).toMap must haveSize(1)
     }
@@ -19,7 +19,7 @@ class BabelSchemaSpec extends Specification with ScalaCheck {
     "Must expand the macro '@FromMapApply'" in {
       Test(Map("value" -> 1)) must beAnInstanceOf[Test]
     }
-    "Must expand the macro '@SchemaDefinition'" in {
+    "Must expand the macro '@CustomTypeAstGenerator'" in {
       Test.definitionJson.noSpaces must beEqualTo(
         """{"Test":{"type":"object","properties":{"value":"Int"}}}"""
       )

@@ -1,23 +1,23 @@
-package schema
+package types.custom.macros
 
 import org.specs2.mutable.Specification
 
 /**
   * Test the macro [[ClassTypeMap]].
   */
-class SchemaDefinitionSpec extends Specification {
+class CustomTypeAstGeneratorSuite extends Specification {
 
   "Macro annotation expansion" should {
 
     "of the method: 'definitionJson : Json'" should {
       "work with single parameter classes" in {
-        @SchemaDefinition class SingleParameterClass(value: Int)
+        @CustomTypeAstGenerator class SingleParameterClass(value: Int)
         SingleParameterClass.definitionJson.noSpaces must beEqualTo(
           """{"SingleParameterClass":{"type":"object","properties":{"value":"Int"}}}"""
         )
       }
       "work with multiple parameter classes" in {
-        @SchemaDefinition class MultipleParameterClass(stringValue: String, floatValue: Float)
+        @CustomTypeAstGenerator class MultipleParameterClass(stringValue: String, floatValue: Float)
 
         MultipleParameterClass.definitionJson.noSpaces must beEqualTo(
           """
@@ -27,7 +27,7 @@ class SchemaDefinitionSpec extends Specification {
       }
       "work when already having a companion object" in {
         val expectation: Int = 42
-        @SchemaDefinition class ClassWithCompanion(stringValue: String, intValue: Int)
+        @CustomTypeAstGenerator class ClassWithCompanion(stringValue: String, intValue: Int)
         object ClassWithCompanion {
           def testValue: Int = expectation
         }
@@ -41,7 +41,7 @@ class SchemaDefinitionSpec extends Specification {
     }
     "of the method: 'definitionYaml : YamlSyntax'" should {
       "work with single parameter classes" in {
-        @SchemaDefinition class SingleParameterClass(value: Int)
+        @CustomTypeAstGenerator class SingleParameterClass(value: Int)
         SingleParameterClass.definitionYaml.spaces2.trim must beEqualTo(
           """SingleParameterClass:
             |  type: object
@@ -51,7 +51,7 @@ class SchemaDefinitionSpec extends Specification {
         )
       }
       "work with multiple parameter classes" in {
-        @SchemaDefinition class MultipleParameterClass(stringValue: String, floatValue: Float)
+        @CustomTypeAstGenerator class MultipleParameterClass(stringValue: String, floatValue: Float)
 
         MultipleParameterClass.definitionYaml.spaces2.trim must beEqualTo(
           """MultipleParameterClass:
@@ -64,7 +64,7 @@ class SchemaDefinitionSpec extends Specification {
       }
       "work when already having a companion object" in {
         val expectation: Int = 42
-        @SchemaDefinition class ClassWithCompanion(stringValue: String, intValue: Int)
+        @CustomTypeAstGenerator class ClassWithCompanion(stringValue: String, intValue: Int)
         object ClassWithCompanion {
           def testValue: Int = expectation
         }

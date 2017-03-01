@@ -1,4 +1,4 @@
-package schema
+package types.custom.macros
 
 import org.specs2.ScalaCheck
 import org.specs2.mutable.Specification
@@ -6,7 +6,7 @@ import org.specs2.mutable.Specification
 /**
   * Test the macro [[Class2Map]].
   */
-class Class2MapSpec extends Specification with ScalaCheck {
+class Class2MapSuite extends Specification with ScalaCheck {
 
   "Macro annotation expansion" should {
     "work with single parameter classes" in {

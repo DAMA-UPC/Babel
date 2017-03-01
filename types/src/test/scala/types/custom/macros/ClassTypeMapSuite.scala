@@ -1,11 +1,11 @@
-package schema
+package types.custom.macros
 
 import org.specs2.mutable.Specification
 
 /**
   * Test the macro [[ClassTypeMap]].
   */
-class ClassTypeMapSpec extends Specification {
+class ClassTypeMapSuite extends Specification {
 
   "Macro annotation expansion" should {
     "work with single parameter classes" in {

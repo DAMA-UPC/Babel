@@ -1,4 +1,4 @@
-package schema
+package types.custom.macros
 
 import scala.annotation.compileTimeOnly
 import scala.collection.immutable.Seq
@@ -24,14 +24,14 @@ import scala.meta._
   * }}}
   */
 @compileTimeOnly("@Class2Map not expanded")
-private[schema] class Class2Map extends scala.annotation.StaticAnnotation {
+class Class2Map extends scala.annotation.StaticAnnotation {
   inline def apply(defn: Any): Any = meta(Class2Map.impl(defn))
 }
 
 /**
   * Object containing the [[Class2Map]] macro annotation expansion implementation.
   */
-private[schema] object Class2Map {
+object Class2Map {
 
   /**
     * Implementation of the [[Class2Map]] macro expansion.

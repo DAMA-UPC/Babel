@@ -1,4 +1,6 @@
-package schema
+package types.custom
+
+import types.custom.macros.{Class2Map, ClassTypeMap, CustomTypeAstGenerator, FromMapApply}
 
 import scala.annotation.{compileTimeOnly, tailrec}
 import scala.collection.immutable.Seq
@@ -56,28 +58,28 @@ import scala.meta._
 //
 
 /**
-  * Represents a Babel Schema class. This class aggregates the macros [[Class2Map]],
-  * [[ClassTypeMap]], [[FromMapApply]] and [[SchemaDefinition]] methods to the input
+  * Represents a Babel custom type class. This class aggregates the macro [[Class2Map]],
+  * [[ClassTypeMap]], [[FromMapApply]] and [[CustomTypeAstGenerator]] generated methods to the input
   * class and its companion object.
   */
-@compileTimeOnly("@BabelSchema not expanded")
-class BabelSchema extends scala.annotation.StaticAnnotation {
+@compileTimeOnly("@CustomType not expanded")
+class CustomType extends scala.annotation.StaticAnnotation {
 
-  inline def apply(defn: Any): Any = meta(BabelSchemaImpl.impl(defn))
+  inline def apply(defn: Any): Any = meta(CustomTypeImpl.impl(defn))
 }
 
-private object BabelSchemaImpl {
+private object CustomTypeImpl {
 
   private[this] val methodsToExpand: Seq[(Stat) => Stat with Scope] = {
     Seq(
       Class2Map.impl,
       ClassTypeMap.impl,
       FromMapApply.impl,
-      SchemaDefinition.impl
+      CustomTypeAstGenerator.impl
     )
   }
 
-  private[schema] def impl(defn: Stat): Stat = {
+  private[types] def impl(defn: Stat): Stat = {
     @tailrec
     def loopTransform(objectInExpansion: Stat, toExpand: Seq[(Stat) => Stat with Scope]): Stat = {
       toExpand.headOption match {
