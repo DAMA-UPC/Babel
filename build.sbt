@@ -15,7 +15,6 @@ lazy val dependencies: Seq[Def.Setting[_]] = Seq(
     val sourceCodeVersion = "0.1.3"
     val catsVersion = "0.9.0"
     val circeVersion = "0.7.0"
-    val circeYamlVersion = "0.5.0"
     val specs2Version = "3.8.8"
     val scalaCheckVersion = "1.13.4"
     Seq(
@@ -29,8 +28,6 @@ lazy val dependencies: Seq[Def.Setting[_]] = Seq(
       "io.circe" %% "circe-core" % circeVersion,
       "io.circe" %% "circe-generic" % circeVersion,
       "io.circe" %% "circe-parser" % circeVersion,
-      // https://github.com/circe/circe-yaml
-      "io.circe" %% "circe-yaml" % circeYamlVersion,
       // Specs2 Test Framework - https://etorreborre.github.io/specs2/
       "org.specs2" %% "specs2-core" % specs2Version % "test",
       "org.specs2" %% "specs2-matcher-extra" % specs2Version % "test",
