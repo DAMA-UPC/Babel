@@ -1,4 +1,4 @@
-package types.custom.macros
+package types.custom.helpers
 
 import scala.annotation.compileTimeOnly
 import scala.collection.immutable.Seq

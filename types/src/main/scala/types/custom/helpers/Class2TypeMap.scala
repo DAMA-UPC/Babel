@@ -1,4 +1,4 @@
-package types.custom.macros
+package types.custom.helpers
 
 import scala.annotation.compileTimeOnly
 import scala.collection.immutable.Seq
@@ -25,17 +25,17 @@ import scala.meta._
   * }}}
   */
 @compileTimeOnly("@Class2TypeMap not expanded")
-class ClassTypeMap extends scala.annotation.StaticAnnotation {
-  inline def apply(defn: Any): Any = meta(ClassTypeMap.impl(defn))
+class Class2TypeMap extends scala.annotation.StaticAnnotation {
+  inline def apply(defn: Any): Any = meta(Class2TypeMap.impl(defn))
 }
 
 /**
-  * Object containing the [[ClassTypeMap]] macro annotation expansion implementation.
+  * Object containing the [[Class2TypeMap]] macro annotation expansion implementation.
   */
-object ClassTypeMap {
+object Class2TypeMap {
 
   /**
-    * Implementation of the [[ClassTypeMap]] macro annotation expansion.
+    * Implementation of the [[Class2TypeMap]] macro annotation expansion.
     */
   val impl: (Stat) => Block = {
     case Term.Block(Seq(cls@Defn.Class(_, _, Nil, ctor, _), companion: Defn.Object)) =>
@@ -52,7 +52,7 @@ object ClassTypeMap {
       // Annotating a class or case class with parameters is forbidden
       abort("@ClassTypeMap is not compatible with classes with type parameters")
 
-    case cls@Defn.Class(_, name, Nil, ctor, template) =>
+    case cls@Defn.Class(_, name, Nil, ctor, _) =>
       // Annotating a class or a case class without parameters.
       val class2TypeMapMethod = createClass2MapMethod(ctor)
       val companion = q"object ${Term.Name(name.value)} { $class2TypeMapMethod }"

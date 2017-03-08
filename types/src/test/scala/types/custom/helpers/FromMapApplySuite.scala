@@ -1,4 +1,4 @@
-package types.custom.macros
+package types.custom.helpers
 
 import org.specs2.ScalaCheck
 import org.specs2.mutable.Specification

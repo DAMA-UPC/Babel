@@ -1,4 +1,4 @@
-package types.custom.macros
+package types.custom.helpers
 
 import scala.annotation.compileTimeOnly
 import scala.collection.immutable.Seq
@@ -8,7 +8,7 @@ import scala.meta._
 /**
   * Before:
   * {{{
-  * @CustomTypeAstGenerator
+  * @DefinitionGenerator
   * case class Test(a: Int, b: String, c: Float)
   * }}}
   *
@@ -18,7 +18,7 @@ import scala.meta._
   * case class Test(a: Int, b: String, c: Float)
   *
   * object Test {
-  *   def definitionJson: _root_.io.circe.Json = {
+  *   def structureJson: _root_.io.circe.Json = {
   *   val typeMap =
   *     _root_.scala.collection.immutable.Map[String, String](
   *       ("a", "Int"),
@@ -39,26 +39,21 @@ import scala.meta._
   *   }
   *   JsonObject.fromMap(_root_.scala.collection.immutable.Map("Test" -> objectPropertiesJson)).asJson
   *   }
-  *
-  *   def definitionYaml: _root_.io.circe.yaml.syntax.YamlSyntax = {
-  *   import _root_.io.circe.yaml.syntax.AsYaml
-  *   definitionJson.asYaml
-  *   }
   * }
   * }}}
   */
-@compileTimeOnly("@BabelSchema not expanded")
-class CustomTypeAstGenerator extends scala.annotation.StaticAnnotation {
-  inline def apply(defn: Any): Any = meta(CustomTypeAstGenerator.impl(defn))
+@compileTimeOnly("@DefinitionGenerator not expanded")
+class StructureDefinitionGenerator extends scala.annotation.StaticAnnotation {
+  inline def apply(defn: Any): Any = meta(StructureDefinitionGenerator.impl(defn))
 }
 
 /**
-  * Object containing the [[CustomTypeAstGenerator]] macro annotation expansion implementation.
+  * Object containing the [[StructureDefinitionGenerator]] macro annotation expansion implementation.
   */
-object CustomTypeAstGenerator {
+object StructureDefinitionGenerator {
 
   /**
-    * Implementation of the [[CustomTypeAstGenerator]] macro expansion.
+    * Implementation of the [[StructureDefinitionGenerator]] macro expansion.
     */
   val impl: (Stat) => Block = {
     (defn: Stat) => {
@@ -67,8 +62,7 @@ object CustomTypeAstGenerator {
           // companion object exists
           val methodsToAdd : Seq[Defn.Def] = {
             Seq(
-              definitionJsonMethod(name, ctor),
-              definitionYamlMethod(name, ctor)
+              definitionJsonMethod(name, ctor)
             )
           }
           val templateStats: Seq[Stat] = {
@@ -83,13 +77,12 @@ object CustomTypeAstGenerator {
           val companion = q"""
                     object ${Term.Name(name.value)} {
                         ${definitionJsonMethod(name, ctor)}
-                        ${definitionYamlMethod(name, ctor)}
                     }
                     """
           Term.Block(Seq(cls, companion))
         case _ =>
           println(defn.structure)
-          abort("@ClassDefinitions must annotate a class.")
+          abort("@StructureDefinitionGenerator must annotate a class.")
       }
     }
   }
@@ -102,9 +95,9 @@ object CustomTypeAstGenerator {
     val className = Term.Name("\"" + name.value + "\"")
 
     q"""
-       def definitionJson : _root_.io.circe.Json = {
+       def structureJson : _root_.io.circe.Json = {
 
-          val typeMap = ${ClassTypeMap.methodBody(ctor)}
+          val typeMap = ${Class2TypeMap.methodBody(ctor)}
 
           import _root_.io.circe._
 
@@ -130,18 +123,6 @@ object CustomTypeAstGenerator {
             )
           ).asJson
         }
-      """
-  }
-
-  /**
-    * Generates the YAML definition method.
-    */
-  private[this] def definitionYamlMethod(name: Name, ctor: Ctor.Primary): Defn.Def = {
-    q"""
-       def definitionYaml : _root_.io.circe.yaml.syntax.YamlSyntax = {
-         import _root_.io.circe.yaml.syntax.AsYaml
-         definitionJson.asYaml
-       }
       """
   }
 }
