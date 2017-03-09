@@ -8,7 +8,7 @@ import org.specs2.mutable.Specification
   */
 class FromMapApplySuite extends Specification with ScalaCheck {
 
-  "@Macro annotation expansion" should {
+  "Macro annotation expansion" should {
     "work with single parameter classes" in {
       @FromMapApply case class Test(value: Int)
       prop {
