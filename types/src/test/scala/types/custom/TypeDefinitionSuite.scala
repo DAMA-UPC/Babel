@@ -20,9 +20,15 @@ class TypeDefinitionSuite extends Specification with ScalaCheck {
       Test(Map("value" -> 1)) must beAnInstanceOf[Test]
     }
     "Must expand the macro '@TypeDefinition'" in {
-      Test.definition.noSpaces must beEqualTo(
+      Test.structureJson.noSpaces must beEqualTo(
         """{"Test":{"type":"object","properties":{"value":"Int"}}}"""
       )
+    }
+    "The expanded class companion must implement the interface 'CustomType'" in {
+      new Test(1) must beAnInstanceOf[CustomType]
+    }
+    "The class companion must implement the interface 'CustomTypeCompanion[CustomType]'" in {
+      Test must beAnInstanceOf[CustomTypeCompanion[Test]]
     }
   }
 }
