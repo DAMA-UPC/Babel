@@ -1,5 +1,7 @@
 package types.custom
 
+import scala.collection.Map
+
 /**
   * Trait representing a custom type base class.
   */
