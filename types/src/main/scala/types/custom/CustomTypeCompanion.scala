@@ -1,6 +1,7 @@
 package types.custom
 
 import io.circe.Json
+
 import scala.collection.Map
 
 /**

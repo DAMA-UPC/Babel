@@ -37,21 +37,21 @@ object Class2Map {
     * Implementation of the [[Class2Map]] macro expansion.
     */
   val impl: (Stat) => Class = {
-      case cls@Defn.Class(_, _, Nil, Ctor.Primary(_, _, paramss), template) =>
-        val namesToValues: Seq[Term.Tuple] = paramss.flatten.map {
-          (param: Param) =>
-            q"(${param.name.syntax}, ${Term.Name(param.name.value)})"
-        }
-        val toMapImpl: Term =
-          q"_root_.scala.collection.Map[String, Any](..$namesToValues)"
-        val method =
-          q"def toMap: _root_.scala.collection.Map[String, Any] = $toMapImpl"
-        val templateStats: Seq[Stat] = method +: template.stats.getOrElse(Nil)
-        cls.copy(templ = template.copy(stats = Some(templateStats)))
-      case Defn.Class(_, _, tParams, _, _) if tParams.nonEmpty =>
-        abort("@Class2Map is not compatible with classes with type parameters")
-      case defn =>
-        println(defn.structure)
-        abort("@Class2Map must annotate a class.")
-    }
+    case cls@Defn.Class(_, _, Nil, Ctor.Primary(_, _, paramss), template) =>
+      val namesToValues: Seq[Term.Tuple] = paramss.flatten.map {
+        (param: Param) =>
+          q"(${param.name.syntax}, ${Term.Name(param.name.value)})"
+      }
+      val toMapImpl: Term =
+        q"_root_.scala.collection.Map[String, Any](..$namesToValues)"
+      val method =
+        q"def toMap: _root_.scala.collection.Map[String, Any] = $toMapImpl"
+      val templateStats: Seq[Stat] = method +: template.stats.getOrElse(Nil)
+      cls.copy(templ = template.copy(stats = Some(templateStats)))
+    case Defn.Class(_, _, tParams, _, _) if tParams.nonEmpty =>
+      abort("@Class2Map is not compatible with classes with type parameters")
+    case defn =>
+      println(defn.structure)
+      abort("@Class2Map must annotate a class.")
+  }
 }

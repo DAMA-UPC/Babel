@@ -60,7 +60,7 @@ object StructureDefinitionGenerator {
       defn match {
         case Term.Block(Seq(cls@Defn.Class(_, name, _, ctor, _), companion: Defn.Object)) =>
           // companion object exists
-          val methodsToAdd : Seq[Defn.Def] = {
+          val methodsToAdd: Seq[Defn.Def] = {
             Seq(
               definitionJsonMethod(name, ctor)
             )
@@ -74,7 +74,8 @@ object StructureDefinitionGenerator {
           Term.Block(Seq(cls, newCompanion))
         case cls@Defn.Class(_, name, _, ctor, _) =>
           // companion object does not exists
-          val companion = q"""
+          val companion =
+            q"""
                     object ${Term.Name(name.value)} {
                         ${definitionJsonMethod(name, ctor)}
                     }
