@@ -15,7 +15,7 @@ lazy val dependencies: Seq[Def.Setting[_]] = Seq(
     val sourceCodeVersion = "0.1.3"
     val catsVersion = "0.9.0"
     val circeVersion = "0.7.0"
-    val specs2Version = "3.8.8"
+    val specs2Version = "3.8.9"
     val scalaCheckVersion = "1.13.4"
     Seq(
       // https://github.com/milessabin/shapeless
