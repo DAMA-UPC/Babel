@@ -4,10 +4,9 @@ package types.primitives
   * Represents a Primitive type constraint.
   *
   * For instance, if we want a constraint that forces the Integers
-  * to be positive, we can use:
-  *
-  * {{{
-  *   val constraint = Constraint("MIN_VALUE", 0)
-  * }}}
+  * to be positive, we can set the 'Name' to 'MinValue', and the value to '0'.
   */
-case class Constraint[T] private[primitives](name: String, value: T)
+trait Constraint {
+  val name : String
+  val value : Any
+}
