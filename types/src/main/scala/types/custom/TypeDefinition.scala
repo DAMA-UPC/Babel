@@ -128,7 +128,7 @@ private object CustomTypeImpl {
       val newCompanionTemplate = companionTemplate.copy(parents = newCompanionParents)
       val newCompanion = companion.copy(templ = newCompanionTemplate)
 
-      // Returns the class with the added interfaces-
+      // Returns the class with the added interfaces.
       Term.Block(Seq(newClass, newCompanion))
 
     case inputDefinition =>
