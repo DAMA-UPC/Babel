@@ -6,7 +6,7 @@ package types.primitives
   * For instance, if we want a constraint that forces the Integers
   * to be positive, we can set the 'Name' to 'MinValue', and the value to '0'.
   */
-trait Constraint {
+trait Constraint[T] {
   val name : String
-  val value : Any
+  val value : T
 }

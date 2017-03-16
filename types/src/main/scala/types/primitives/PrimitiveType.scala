@@ -8,7 +8,7 @@ import types.Type
   * types which usually can be represented as a simple value in
   * all programming languages, like the numeric literals or the Strings.
   */
-trait PrimitiveType[T <: Constraint] extends Type {
+trait PrimitiveType[T <: Constraint[_]] extends Type {
 
   /**
     * Name of the primitive type in the AST.
