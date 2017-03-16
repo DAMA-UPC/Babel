@@ -16,7 +16,7 @@ lazy val dependencies: Seq[Def.Setting[_]] = Seq(
     val catsVersion = "0.9.0"
     val circeVersion = "0.7.0"
     val specs2Version = "3.8.9"
-    val scalaCheckVersion = "1.13.4"
+    val scalaCheckVersion = "1.13.5"
     Seq(
       // https://github.com/milessabin/shapeless
       "com.chuusai" %% "shapeless" % shapelessVersion,
@@ -60,6 +60,11 @@ scalastyleFailOnError := true
 lazy val testScalastyle = taskKey[Unit]("testScalastyle")
 testScalastyle := org.scalastyle.sbt.ScalastylePlugin.scalastyle.in(Test).toTask("").value
 (test in Test) := ((test in Test) dependsOn testScalastyle).value
+
+/************  Code Coverage   **************/
+
+coverageMinimum := 100
+coverageFailOnMinimum := true
 
 /**************    Modules    ***************/
 
