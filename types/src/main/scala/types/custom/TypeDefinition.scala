@@ -65,10 +65,10 @@ import scala.meta._
 @compileTimeOnly("@TypeDefinition not expanded")
 class TypeDefinition extends scala.annotation.StaticAnnotation {
 
-  inline def apply(defn: Any): Any = meta(CustomTypeImpl.impl(defn))
+  inline def apply(defn: Any): Any = meta(TypeDefinitionImpl.impl(defn))
 }
 
-private object CustomTypeImpl {
+private object TypeDefinitionImpl {
 
   /**
     * Implementation of the [[TypeDefinition]] macro annotation expansion.

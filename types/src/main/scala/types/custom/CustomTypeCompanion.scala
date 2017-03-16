@@ -1,6 +1,6 @@
 package types.custom
 
-import io.circe.Json
+import types.TypeCompanion
 
 import scala.collection.Map
 
@@ -9,13 +9,7 @@ import scala.collection.Map
   *
   * @tparam T representing the assigned [[CustomType]].
   */
-trait CustomTypeCompanion[T <: CustomType] {
-
-  /**
-    * When calling this method over a custom type it will generate a
-    * the schema definition.
-    */
-  def structureJson: Json
+trait CustomTypeCompanion[T <: CustomType] extends TypeCompanion {
 
   /**
     * Apply override used for de-serializing a map of variables
