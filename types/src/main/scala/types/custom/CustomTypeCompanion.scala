@@ -21,6 +21,6 @@ trait CustomTypeCompanion[T <: CustomType] {
     * Apply override used for de-serializing a map of variables
     * into the assigned class.
     */
-  def apply(m: Map[String, Any]): T
+  def apply(content: Map[String, Any]): T
 
 }
