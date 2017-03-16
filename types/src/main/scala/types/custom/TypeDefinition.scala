@@ -11,12 +11,14 @@ import scala.meta._
 //Before:
 //
 //@TypeDefinition
+//case class Test(a: Int, b: String, c: Float)
+//
+//After:
+//
 //case class Test(a: Int, b: String, c: Float) extends CustomType {
 //  def toMap: Map[String, Any] =
 //    _root_.scala.collection.Map[String, Any](("a", a), ("b", b), ("c", c))
 //}
-//
-//After:
 //
 //object Test extends CustomTypeCompanion[CustomType] {
 //  def structureJson: _root_.io.circe.Json = {
