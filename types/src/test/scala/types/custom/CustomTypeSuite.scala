@@ -4,12 +4,12 @@ import org.specs2.ScalaCheck
 import org.specs2.mutable.Specification
 
 /**
-  * Test the macro [[TypeDefinition]].
+  * Test the macro [[CustomType]].
   */
-class TypeDefinitionSuite extends Specification with ScalaCheck {
+class CustomTypeSuite extends Specification with ScalaCheck {
 
   "Macro annotation expansion" should {
-    @TypeDefinition class Test(value: Int)
+    @CustomType class Test(value: Int)
     "Must expand the macro '@Class2Map'" in {
       new Test(1).toMap must haveSize(1)
     }
@@ -25,7 +25,7 @@ class TypeDefinitionSuite extends Specification with ScalaCheck {
       )
     }
     "The expanded class companion must implement the interface 'CustomType'" in {
-      new Test(1) must beAnInstanceOf[CustomType]
+      new Test(1) must beAnInstanceOf[CustomTypeImpl]
     }
     "The class companion must implement the interface 'CustomTypeCompanion[CustomType]'" in {
       Test must beAnInstanceOf[CustomTypeCompanion[Test]]
