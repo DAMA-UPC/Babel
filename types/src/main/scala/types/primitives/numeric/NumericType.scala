@@ -7,10 +7,20 @@ import types.primitives.PrimitiveType
   */
 sealed trait NumericType extends PrimitiveType[NumericTypeConstraint]
 
+/**
+  * Numeric type companion object.
+  */
 object NumericType {
 
+  /**
+    * Name of the 'Number' types in the AST.
+    */
   val typeName: String = "Number"
 
+  /**
+    * Apply method needed for generating a [[NumericType]]
+    * from the given constraints.
+    */
   def apply(constraints: NumericTypeConstraint*): NumericType = {
 
     new NumericType {
