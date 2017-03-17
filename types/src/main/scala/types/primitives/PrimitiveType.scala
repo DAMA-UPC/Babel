@@ -1,6 +1,5 @@
 package types.primitives
 
-import cats.data.NonEmptyList
 import types.Type
 
 /**
@@ -18,5 +17,5 @@ trait PrimitiveType[T <: Constraint[_]] extends Type {
   /**
     * Primitive types constraints.
     */
-  val constraints: NonEmptyList[T]
+  val constraints: Seq[T]
 }

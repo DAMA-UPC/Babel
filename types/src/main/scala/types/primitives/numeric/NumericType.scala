@@ -1,24 +1,21 @@
 package types.primitives.numeric
 
-import cats.data.NonEmptyList
 import types.primitives.PrimitiveType
 
 /**
-  * Represents a Numeric type.
+  * Represents a Numeric type, which represents a primitive type number.
   */
 sealed trait NumericType extends PrimitiveType[NumericTypeConstraint]
 
 object NumericType {
 
-  val typeName : String = "Number"
+  val typeName: String = "Number"
 
-  def apply(constraint : NumericTypeConstraint,
-            otherConstraints: NumericTypeConstraint*) : NumericType = {
+  def apply(constraints: NumericTypeConstraint*): NumericType = {
 
     new NumericType {
-      override val name : String = typeName
-      override val constraints: NonEmptyList[NumericTypeConstraint] =
-        NonEmptyList.of(constraint, otherConstraints : _*)
+      override val name: String = typeName
+      override val constraints: Seq[NumericTypeConstraint] = constraints
     }
   }
 }
