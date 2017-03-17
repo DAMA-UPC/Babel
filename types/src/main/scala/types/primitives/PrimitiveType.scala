@@ -7,7 +7,7 @@ import types.Type
   * types which usually can be represented as a simple value in
   * all programming languages, like the numeric literals or the Strings.
   */
-trait PrimitiveType[T <: Constraint[_]] extends Type {
+trait PrimitiveType[T <: PrimitiveType[T, _], C <: Constraint[_]] extends Type {
 
   /**
     * Name of the primitive type in the AST.
@@ -17,5 +17,12 @@ trait PrimitiveType[T <: Constraint[_]] extends Type {
   /**
     * Primitive types constraints.
     */
-  val constraints: Seq[T]
+  val constraints: Seq[C]
+
+  /**
+    * Adds a new constraint to a type. If the constraint
+    * is repeated replaces it with the new one.
+    */
+  def withConstraint(constraint: C): T
+
 }
