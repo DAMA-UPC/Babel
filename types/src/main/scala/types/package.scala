@@ -1,4 +1,5 @@
-import types.primitives.numeric.{NumericTypesConstraints, NumericTypes}
+import types.primitives.numeric.{NumericTypes, NumericTypesConstraints}
+import types.primitives.timestamp.{TimestampTypesConstraints, TimestampTypes}
 
 /**
   * Package object containing the API for managing types in Babel.
@@ -9,3 +10,6 @@ trait types
 // ** NUMERIC TYPES **/
   extends NumericTypes
   with NumericTypesConstraints
+// ** TIMESTAMP TYPES **/
+  with TimestampTypes
+  with TimestampTypesConstraints
