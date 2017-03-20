@@ -47,19 +47,19 @@ class NumericTypeSuites extends Specification {
   "ConstraintOverloads" should {
     "Adds a single constraint as expected" in {
       // No value overlapping
-      val constraint = maxNumberDecimals(1)
+      val constraint = constraintMaxNumberDecimals(1)
       val noOverlapValue = NumericType().withConstraint(constraint)
       val expectation1 = noOverlapValue.constraints must beEqualTo(Seq(constraint))
 
       // Value overlapping
-      val newConstraint = maxNumberDecimals(0)
+      val newConstraint = constraintMaxNumberDecimals(0)
       val valueOverlapping = noOverlapValue.withConstraint(newConstraint)
       val expectation2 = valueOverlapping.constraints must beEqualTo(Seq(newConstraint))
 
       expectation1 && expectation2
     }
     "Primitive values Implicit conversions constraint overloads must compile as expected" in {
-      val newConstraint = maxValue(0)
+      val newConstraint = constraintMaxValue(0)
       BigInt
         .withConstraint(newConstraint)
         .constraints

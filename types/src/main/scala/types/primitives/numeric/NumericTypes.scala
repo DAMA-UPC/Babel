@@ -13,9 +13,9 @@ trait NumericTypes {
     */
   private[types] val astByte: NumericType =
     NumericType(
-      minValue(Byte.MinValue),
-      maxValue(Byte.MaxValue),
-      maxNumberDecimals(0)
+      constraintMinValue(Byte.MinValue),
+      constraintMaxValue(Byte.MaxValue),
+      constraintMaxNumberDecimals(0)
     )
 
   /**
@@ -28,9 +28,9 @@ trait NumericTypes {
     */
   private[types] val astShort: NumericType =
     NumericType(
-      minValue(Short.MinValue),
-      maxValue(Short.MaxValue),
-      maxNumberDecimals(0)
+      constraintMinValue(Short.MinValue),
+      constraintMaxValue(Short.MaxValue),
+      constraintMaxNumberDecimals(0)
     )
 
   /**
@@ -43,9 +43,9 @@ trait NumericTypes {
     */
   private[types] val astInt: NumericType =
     NumericType(
-      minValue(Int.MinValue),
-      maxValue(Int.MaxValue),
-      maxNumberDecimals(0)
+      constraintMinValue(Int.MinValue),
+      constraintMaxValue(Int.MaxValue),
+      constraintMaxNumberDecimals(0)
     )
 
   /**
@@ -58,9 +58,9 @@ trait NumericTypes {
     */
   private[types] val astLong: NumericType =
     NumericType(
-      minValue(Long.MinValue),
-      maxValue(Long.MaxValue),
-      maxNumberDecimals(0)
+      constraintMinValue(Long.MinValue),
+      constraintMaxValue(Long.MaxValue),
+      constraintMaxNumberDecimals(0)
     )
 
   /**
@@ -73,7 +73,7 @@ trait NumericTypes {
     */
   private[types] val astBigInt: NumericType =
     NumericType(
-      maxNumberDecimals(0)
+      constraintMaxNumberDecimals(0)
     )
 
   /**
@@ -87,9 +87,9 @@ trait NumericTypes {
   private[types] val astFloat: NumericType = {
     @inline val maxNumberDecimalsInScalaFloat = 8
     NumericType(
-      minValue(Float.MinValue),
-      maxValue(Float.MaxValue),
-      maxNumberDecimals(maxNumberDecimalsInScalaFloat)
+      constraintMinValue(Float.MinValue),
+      constraintMaxValue(Float.MaxValue),
+      constraintMaxNumberDecimals(maxNumberDecimalsInScalaFloat)
     )
   }
 
@@ -104,9 +104,9 @@ trait NumericTypes {
   private[types] val astDouble: NumericType = {
     @inline val maxNumberDecimalsInScalaDouble = 16
     NumericType(
-      minValue(Double.MinValue),
-      maxValue(Double.MaxValue),
-      maxNumberDecimals(maxNumberDecimalsInScalaDouble)
+      constraintMinValue(Double.MinValue),
+      constraintMaxValue(Double.MaxValue),
+      constraintMaxNumberDecimals(maxNumberDecimalsInScalaDouble)
     )
   }
 
