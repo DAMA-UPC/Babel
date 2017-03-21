@@ -9,7 +9,6 @@ import org.specs2.mutable.Specification
 class NumericTypeSuites extends Specification {
 
   "Scala primitive types implicit conversion to Babel types" should {
-
     "Perform automatically with 'scala.Byte'" in {
       val value: NumericType = Byte
       value must beEqualTo(astByte)
@@ -43,25 +42,46 @@ class NumericTypeSuites extends Specification {
       value must beEqualTo(astBigDecimal)
     }
   }
-
   "ConstraintOverloads" should {
     "Adds a single constraint as expected" in {
       // No value overlapping
-      val constraint = constraintMaxNumberDecimals(1)
-      val noOverlapValue = NumericType().withConstraint(constraint)
+      val minValue: Int = 1
+      val constraint = NumericTypesConstraints.minValue(minValue)
+      // Test the MinValue constraint
+      val noOverlapValue = NumericType().withMinValue(minValue)
       val expectation1 = noOverlapValue.constraints must beEqualTo(Seq(constraint))
 
       // Value overlapping
-      val newConstraint = constraintMaxNumberDecimals(0)
-      val valueOverlapping = noOverlapValue.withConstraint(newConstraint)
-      val expectation2 = valueOverlapping.constraints must beEqualTo(Seq(newConstraint))
+      val maxNumberDecimals: Int = 4
+      // Test the MaxNumberDecimals constraint
+      val newConstraint = NumericTypesConstraints.maxNumberDecimals(maxNumberDecimals)
+      val valueOverlapping = noOverlapValue.withMaxNumberDecimals(maxNumberDecimals)
+      val expectation2 = valueOverlapping.constraints must beEqualTo(Seq(constraint, newConstraint))
+
+      expectation1 && expectation2
+    }
+    "Replaces a constraint as expected" in {
+      val initialValue: Int = 42
+      val initialConstraint = NumericTypesConstraints.minValue(initialValue)
+      val initialType = Int.withMinValue(initialValue)
+
+      val endValue: Int = 15923
+      val endConstraint = NumericTypesConstraints.minValue(endValue)
+      val endType = initialType.withMinValue(endValue)
+
+      val expectation1 =
+        endType.constraints.exists(_.equals(endConstraint)) must beTrue
+
+      val expectation2 =
+        endType.constraints.exists(_.equals(initialConstraint)) must beFalse
 
       expectation1 && expectation2
     }
     "Primitive values Implicit conversions constraint overloads must compile as expected" in {
-      val newConstraint = constraintMaxValue(0)
+      val maxValue = 4
+      val newConstraint = NumericTypesConstraints.maxValue(maxValue) // Test the MaxValue constraint
       BigInt
-        .withConstraint(newConstraint)
+        .withMaxValue(maxValue)
         .constraints
         .exists(_.equals(newConstraint)) must beTrue
     }

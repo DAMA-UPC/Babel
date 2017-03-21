@@ -19,10 +19,4 @@ trait PrimitiveType[T <: PrimitiveType[T, _], C <: Constraint[_]] extends Type {
     */
   val constraints: Seq[C]
 
-  /**
-    * Adds a new constraint to a type. If the constraint
-    * is repeated replaces it with the new one.
-    */
-  def withConstraint(constraint: C): T
-
 }

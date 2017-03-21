@@ -16,7 +16,7 @@ trait TimestampTypes {
     * Will be serialized in the AST as: '2017-03-20T10:24:22.730'
     */
   private[types] val astLocalDateTime: TimestampType =
-    TimestampType(constraintFormatLocalTimestamp)
+    TimestampType(TimestampTypesConstraints.formatLocalTimestamp)
 
   /**
     * Implicit conversion from [[LocalDateTime]] to [[astLocalDateTime]].
@@ -31,7 +31,7 @@ trait TimestampTypes {
     * or '2017-03-20T10:24:22.730+10:00'
     */
   private[types] val astOffsetDateTime: TimestampType =
-    TimestampType(constraintFormatTimestampWithOffset)
+    TimestampType(TimestampTypesConstraints.formatTimestampWithOffset)
 
   /**
     * Implicit conversion from [[OffsetDateTime]] to [[astOffsetDateTime]].
@@ -51,7 +51,7 @@ trait TimestampTypes {
     * Will be serialized in the AST as: '2017-03-20T11:34:56.581+01:00[Europe/Andorra]'
     */
   private[types] val astZonedDateTime: TimestampType =
-    TimestampType(constraintFormatTimestampWithTimeZone)
+    TimestampType(TimestampTypesConstraints.formatTimestampWithTimeZone)
 
   /**
     * Implicit conversion from [[ZonedDateTime]] to [[astZonedDateTime]].

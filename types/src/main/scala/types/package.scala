@@ -1,5 +1,5 @@
-import types.primitives.numeric.{NumericTypes, NumericTypesConstraints}
-import types.primitives.timestamp.{TimestampTypesConstraints, TimestampTypes}
+import types.primitives.numeric.NumericTypes
+import types.primitives.timestamp.TimestampTypes
 
 /**
   * Package object containing the API for managing types in Babel.
@@ -7,9 +7,16 @@ import types.primitives.timestamp.{TimestampTypesConstraints, TimestampTypes}
 package object types extends types
 
 trait types
-// ** NUMERIC TYPES **/
   extends NumericTypes
-  with NumericTypesConstraints
-// ** TIMESTAMP TYPES **/
-  with TimestampTypes
-  with TimestampTypesConstraints
+    with TimestampTypes {
+
+  /**
+    * Class representing a 'Now' in the whole framework implementation.
+    * Can also be used for constraining the time to the current time when
+    * working with timestamp types.
+    */
+  @inline case object Now {
+    val astName = "NOW()"
+  }
+
+}
