@@ -8,7 +8,7 @@ import types.primitives.PrimitiveType
   */
 case class NumericType(override val name: String,
                        override val constraints: Seq[NumericTypeConstraint]
-                      ) extends PrimitiveType[NumericType, NumericTypeConstraint] {
+                      ) extends PrimitiveType[NumericTypeConstraint] {
 
   /**
     * Copies the type adding/replacing the minimum value constraint

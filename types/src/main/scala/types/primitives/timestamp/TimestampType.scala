@@ -10,7 +10,7 @@ import types.primitives.PrimitiveType
   */
 case class TimestampType private (override val name: String,
                                   override val constraints: Seq[TimestampTypeConstraint]
-                                 ) extends PrimitiveType[TimestampType, TimestampTypeConstraint] {
+                                 ) extends PrimitiveType[TimestampTypeConstraint] {
 
   /**
     * Sets the minimum possible timestamp to the current timestamp.
