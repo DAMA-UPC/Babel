@@ -4,17 +4,17 @@ version := "0.0.1-SNAPSHOT"
 
 organization := "edu.upc.dama"
 
-scalaVersion := "2.12.1"
+scalaVersion := "2.12.2"
 
 /*************   DEPENDENCIES   *************/
 
 lazy val dependencies: Seq[Def.Setting[_]] = Seq(
-  scalaVersion := "2.12.1",
+  scalaVersion := "2.12.2",
   libraryDependencies ++= {
     val shapelessVersion = "2.3.2"
     val sourceCodeVersion = "0.1.3"
     val catsVersion = "0.9.0"
-    val circeVersion = "0.7.0"
+    val circeVersion = "0.7.1"
     val specs2Version = "3.8.9"
     val scalaCheckVersion = "1.13.5"
     Seq(
@@ -37,7 +37,7 @@ lazy val dependencies: Seq[Def.Setting[_]] = Seq(
       "org.scalacheck" %% "scalacheck" % scalaCheckVersion % "test"
     )
   },
-  addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0-M7" cross CrossVersion.full)
+  addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0-M8" cross CrossVersion.full)
 )
 
 lazy val macroDependencies: Seq[Def.Setting[_]] = Seq(
@@ -52,7 +52,7 @@ lazy val macroDependencies: Seq[Def.Setting[_]] = Seq(
   // A dependency on scala.meta is required to write new-style macros, but not
   // to expand such macros.  This is similar to how it works for old-style
   // macros and a dependency on scala.reflect.
-  libraryDependencies += "org.scalameta" %% "scalameta" % "1.6.0"
+  libraryDependencies += "org.scalameta" %% "scalameta" % "1.7.0"
 )
 
 /*************   TEST OPTIONS   *************/
