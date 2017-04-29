@@ -2,7 +2,7 @@ package types.custom
 
 import types.custom.helpers._
 
-import scala.annotation.{compileTimeOnly, tailrec}
+import scala.annotation.compileTimeOnly
 import scala.collection.immutable.Seq
 import scala.meta.Term.Block
 import scala.meta.Type.Name
@@ -75,25 +75,12 @@ private object MacroImpl {
     */
   private[types] def impl(defn: Stat): Stat = {
     addCustomTypeInterfaces(
-      addMethodsLoop(defn, methodsToExpand)
+      addCustomTypesMethods(defn)
     )
   }
 
   /**
-    * Expands the class
-    */
-  @tailrec
-  private[this] def addMethodsLoop(classToExpand: Stat,
-                                   toExpand: Seq[(Stat) => Stat with Scope]): Stat = {
-    toExpand.headOption match {
-      case Some(methodToExpand) =>
-        addMethodsLoop(methodToExpand(classToExpand), toExpand.drop(1))
-      case _ => classToExpand
-    }
-  }
-
-  /**
-    * Macros implementing
+    * Methods that needs to be included in the expanded class.
     */
   private[this] val methodsToExpand: Seq[(Stat) => Stat with Scope] = {
     Seq(
@@ -108,32 +95,39 @@ private object MacroImpl {
     * Add [[CustomTypeImpl]] and [[CustomTypeCompanion]] as parents of the
     * case class being expanded.
     */
-  private[this] val addCustomTypeInterfaces: (Stat) => Block = {
+  private[this] def addCustomTypeInterfaces(defn: Stat): Block = {
+    defn match {
+      case Term.Block(Seq(cls: Defn.Class, companion: Defn.Object)) =>
 
-    case Term.Block(Seq(cls: Defn.Class, companion: Defn.Object)) =>
+        // Adds to the class the 'CustomType' interface as parent.
+        val Defn.Class(_, _, _, _, classTemplate) = cls
+        val Template(_, classParents, _, _) = classTemplate
+        val newCustomTypeParents = ctor"_root_.types.custom.CustomTypeImpl"
+        val newClassTemplate = classTemplate.copy(parents = classParents :+ newCustomTypeParents)
+        val newClass = cls.copy(templ = newClassTemplate)
 
-      // Adds to the class the 'CustomType' interface as parent.
-      val Defn.Class(_, _, _, _, classTemplate) = cls
-      val Template(_, classParents, _, _) = classTemplate
-      val newCustomTypeParents = ctor"_root_.types.custom.CustomTypeImpl"
-      val newClassTemplate = classTemplate.copy(parents = classParents :+ newCustomTypeParents)
-      val newClass = cls.copy(templ = newClassTemplate)
+        // Adds to the companion object the interface 'CustomTypeCompanion'
+        val Defn.Object(_, _, companionTemplate) = companion
+        val Template(_, companionParents, _, _) = companionTemplate
+        val classTypeName: Name = Type.Name(cls.name.value)
+        val companionConstructor = ctor"_root_.types.custom.CustomTypeCompanion[$classTypeName]"
+        val newCompanionParents = companionParents :+ companionConstructor
+        val newCompanionTemplate = companionTemplate.copy(parents = newCompanionParents)
+        val newCompanion = companion.copy(templ = newCompanionTemplate)
 
-      // Adds to the companion object the interface 'CustomTypeCompanion'
-      val Defn.Object(_, _, companionTemplate) = companion
-      val Template(_, companionParents, _, _) = companionTemplate
-      val classTypeName: Name = Type.Name(cls.name.value)
-      val companionConstructor = ctor"_root_.types.custom.CustomTypeCompanion[$classTypeName]"
-      val newCompanionParents = companionParents :+ companionConstructor
-      val newCompanionTemplate = companionTemplate.copy(parents = newCompanionParents)
-      val newCompanion = companion.copy(templ = newCompanionTemplate)
+        // Returns the class with the added interfaces.
+        Term.Block(Seq(newClass, newCompanion))
 
-      // Returns the class with the added interfaces.
-      Term.Block(Seq(newClass, newCompanion))
-
-    case inputDefinition =>
-      // Annotating a class or case class with parameters is forbidden
-      println(inputDefinition.structure)
-      abort("@CustomType must have a companion object.")
+      case inputDefinition =>
+        // Annotating a class or case class with parameters is forbidden
+        println(inputDefinition.structure)
+        abort("@CustomType must have a companion object.")
+    }
   }
+
+  /**
+    * Transforms the class adding the required macro methods.
+    */
+  private[this] def addCustomTypesMethods(classToExpand: Stat): Stat =
+    methodsToExpand.foldLeft(classToExpand)((clazz, method) => method(clazz))
 }
