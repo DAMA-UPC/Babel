@@ -52,7 +52,8 @@ lazy val macroDependencies: Seq[Def.Setting[_]] = Seq(
   // A dependency on scala.meta is required to write new-style macros, but not
   // to expand such macros.  This is similar to how it works for old-style
   // macros and a dependency on scala.reflect.
-  libraryDependencies += "org.scalameta" %% "scalameta" % "1.7.0"
+  libraryDependencies += "org.scalameta" %% "scalameta" % "1.7.0",
+  libraryDependencies += "org.scalameta" %% "contrib" % "1.7.0"
 )
 
 /*************   TEST OPTIONS   *************/
