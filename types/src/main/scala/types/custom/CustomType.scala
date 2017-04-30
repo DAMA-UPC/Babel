@@ -21,6 +21,9 @@ import scala.meta._
 //}
 //
 //object Test extends CustomTypeCompanion[CustomType] {
+//
+//  override val typeName: String = "Test"
+//
 //  def structureJson: _root_.io.circe.Json = {
 //    val typeMap = _root_.scala.collection.immutable.Map[String, String](
 //      ("a", "Int"),
@@ -100,7 +103,7 @@ private object MacroImpl {
       case Term.Block(Seq(cls: Defn.Class, companion: Defn.Object)) =>
 
         // Adds to the class the 'CustomType' interface as parent.
-        val Defn.Class(_, _, _, _, classTemplate) = cls
+        val Defn.Class(_, name, _, _, classTemplate) = cls
         val Template(_, classParents, _, _) = classTemplate
         val newCustomTypeParents = ctor"_root_.types.custom.CustomTypeImpl"
         val newClassTemplate = classTemplate.copy(parents = classParents :+ newCustomTypeParents)
@@ -113,7 +116,12 @@ private object MacroImpl {
         val companionConstructor = ctor"_root_.types.custom.CustomTypeCompanion[$classTypeName]"
         val newCompanionParents = companionParents :+ companionConstructor
         val newCompanionTemplate = companionTemplate.copy(parents = newCompanionParents)
-        val newCompanion = companion.copy(templ = newCompanionTemplate)
+
+        // Implements the 'typeName' method in the companion case class
+        val className : String = "\"".concat(name.toString()).concat("\"")
+        val nameMethod = q"override val typeName: String = ${Term.Name(className)}"
+        val templateStats = Some(nameMethod +: newCompanionTemplate.stats.getOrElse(Nil))
+        val newCompanion = companion.copy(templ = newCompanionTemplate.copy(stats = templateStats))
 
         // Returns the class with the added interfaces.
         Term.Block(Seq(newClass, newCompanion))
