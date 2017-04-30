@@ -10,11 +10,6 @@ import types.Type
 trait PrimitiveType[C <: Constraint[_]] extends Type {
 
   /**
-    * Name of the primitive type in the AST.
-    */
-  val name: String
-
-  /**
     * Primitive types constraints.
     */
   val constraints: Seq[C]

@@ -16,6 +16,9 @@ import scala.meta._
 //After:
 //
 //case class Test(a: Int, b: String, c: Float) extends CustomTypeImpl {
+//
+//  override val typeName: String = "Test"
+//
 //  def toMap: Map[String, Any] =
 //    _root_.scala.collection.Map[String, Any](("a", a), ("b", b), ("c", c))
 //}
@@ -102,12 +105,23 @@ private object MacroImpl {
     defn match {
       case Term.Block(Seq(cls: Defn.Class, companion: Defn.Object)) =>
 
-        // Adds to the class the 'CustomType' interface as parent.
         val Defn.Class(_, name, _, _, classTemplate) = cls
+
+        // Generates the methods for obtaining the type name either in the type or
+        // in the type companion.
+        val className : String = "\"".concat(name.toString()).concat("\"")
+        val nameMethod = q"override val typeName: String = ${Term.Name(className)}"
+
+        // Adds to the class the 'CustomType' interface as parent.
         val Template(_, classParents, _, _) = classTemplate
         val newCustomTypeParents = ctor"_root_.types.custom.CustomTypeImpl"
         val newClassTemplate = classTemplate.copy(parents = classParents :+ newCustomTypeParents)
-        val newClass = cls.copy(templ = newClassTemplate)
+
+        // Implements the 'typeName' method in the type class and generates the new class.
+        val classTemplateStats = nameMethod +: newClassTemplate.stats.getOrElse(Nil)
+        val newClass = cls.copy(
+          templ = newClassTemplate.copy(stats = Some(classTemplateStats))
+        )
 
         // Adds to the companion object the interface 'CustomTypeCompanion'
         val Defn.Object(_, _, companionTemplate) = companion
@@ -117,12 +131,11 @@ private object MacroImpl {
         val newCompanionParents = companionParents :+ companionConstructor
         val newCompanionTemplate = companionTemplate.copy(parents = newCompanionParents)
 
-        // Implements the 'typeName' method in the companion case class
-        val className : String = "\"".concat(name.toString()).concat("\"")
-        val nameMethod = q"override val typeName: String = ${Term.Name(className)}"
-        val templateStats = Some(nameMethod +: newCompanionTemplate.stats.getOrElse(Nil))
-        val newCompanion = companion.copy(templ = newCompanionTemplate.copy(stats = templateStats))
-
+        // Implements the 'typeName' method in the companion object and updates it.
+        val companionTemplateStats = nameMethod +: newCompanionTemplate.stats.getOrElse(Nil)
+        val newCompanion = companion.copy(
+          templ = newCompanionTemplate.copy(stats = Some(companionTemplateStats))
+        )
         // Returns the class with the added interfaces.
         Term.Block(Seq(newClass, newCompanion))
 

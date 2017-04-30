@@ -6,7 +6,7 @@ import types.primitives.PrimitiveType
 /**
   * Represents a Numeric type, which represents a primitive type number.
   */
-case class NumericType(override val name: String,
+case class NumericType(override val typeName: String,
                        override val constraints: Seq[NumericTypeConstraint]
                       ) extends PrimitiveType[NumericTypeConstraint] {
 

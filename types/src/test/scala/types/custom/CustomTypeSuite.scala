@@ -10,6 +10,9 @@ class CustomTypeSuite extends Specification with ScalaCheck {
 
   "Macro annotation expansion" should {
     @CustomType class Test(value: Int)
+    "Must have the method 'typeName: String' implemented" in {
+      new Test(1).typeName must beEqualTo("Test")
+    }
     "Must generate a companion object with the method 'typeName: String' implemented" in {
       Test.typeName must beEqualTo("Test")
     }

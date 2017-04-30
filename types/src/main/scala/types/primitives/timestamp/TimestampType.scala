@@ -8,7 +8,7 @@ import types.primitives.PrimitiveType
   * Represents a Timestamp type, which represents the way of
   * representing an specific time moment.
   */
-case class TimestampType private (override val name: String,
+case class TimestampType private (override val typeName: String,
                                   override val constraints: Seq[TimestampTypeConstraint]
                                  ) extends PrimitiveType[TimestampTypeConstraint] {
 
