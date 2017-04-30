@@ -1,4 +1,7 @@
-package types.custom.helpers
+package types
+package custom.helpers
+
+import types.primitives.numeric.NumericTypes
 
 import scala.annotation.compileTimeOnly
 import scala.collection.immutable.Seq
@@ -20,8 +23,8 @@ import scala.meta._
   * class Example(a: Int, b: String)
   *
   * object Example {
-  *   def typeMap: _root_.scala.collection.Map[String, Any] =
-  *     _root_.scala.collection.Map(("a", Int), ("b", String))
+  *   def typeMap: _root_.scala.collection.Map[String, Type] =
+  *     _root_.scala.collection.Map(("a", Int.type), ("b", String.type))
   * }}}
   */
 @compileTimeOnly("@Class2TypeMap not expanded")
@@ -46,8 +49,8 @@ object Class2TypeMap {
         class2TypeMapMethod +: companion.templ.stats.getOrElse(Nil)
       val newCompanion = companion.copy(
         templ = companion.templ.copy(stats = Some(templateStats)))
-      Term.Block(Seq(cls, newCompanion))
 
+      Term.Block(Seq(cls, newCompanion))
     case Term.Block(_) =>
       // Annotating a class or case class with parameters is forbidden
       abort("@ClassTypeMap is not compatible with classes with type parameters")
@@ -69,16 +72,24 @@ object Class2TypeMap {
 
 
   private[this] def createClass2MapMethod(ctor: Ctor.Primary): Defn.Def = {
-    q"def typeMap: _root_.scala.collection.immutable.Map[String, String] = ${methodBody(ctor)}"
+    q"def typeMap: _root_.scala.collection.immutable.Map[String, types.Type] = ${methodBody(ctor)}"
   }
 
   private[custom] def methodBody(ctor: Ctor.Primary): Term.Apply = {
 
+    val methodName = "types.primitives.numeric.NumericTypes.typeNameToBabelType"
+
     val namesToValues: Seq[Term.Tuple] = ctor.paramss.flatten.map {
       (param: Param) =>
-        val valueType: String = "\"".concat(param.decltpe.map(_.toString()).get).concat("\"")
-        q"(${param.name.syntax}, ${Term.Name(valueType)})"
+
+        val typeName: String = param.decltpe.get.toString()
+
+        val isNumericType = NumericTypes.typeNameToBabelType(typeName).isDefined
+
+        println(s"\n\nMUAAAAAAAA: '$typeName'\n\n")
+
+        q"(${param.name.syntax}, ${Term.Name(typeName)})"
     }
-    q"_root_.scala.collection.immutable.Map[String, String](..$namesToValues)"
+    q"_root_.scala.collection.immutable.Map[String, types.Type](..$namesToValues)"
   }
 }
