@@ -6,8 +6,9 @@ import types.primitives.Constraint
   * Represents a numeric type constraint.
   */
 private[types]
-sealed case class NumericTypeConstraint private(name: String,
-                                                value: Number) extends Constraint[Number]
+sealed case class NumericTypeConstraint private(override val name: String,
+                                                override val value: String
+                                               ) extends Constraint(name, value)
 
 /**
   * List of all the valid numeric constraints.
@@ -22,17 +23,17 @@ private[types] object NumericTypesConstraints {
     * Sets the minimum possible value of a Number.
     */
   def minValue(value: Number): NumericTypeConstraint =
-    NumericTypeConstraint(minValueNameInAST, value)
+    NumericTypeConstraint(minValueNameInAST, value.toString)
 
   /**
     * Sets the minimum possible value of a Number.
     */
   def maxValue(value: Number): NumericTypeConstraint =
-    NumericTypeConstraint(maxValueNameInAST, value)
+    NumericTypeConstraint(maxValueNameInAST, value.toString)
 
   /**
     * Sets the maximum number of decimals of a Number.
     */
   def maxNumberDecimals(value: Number): NumericTypeConstraint =
-    NumericTypeConstraint(maxNumberDecimalsNameInAST, value)
+    NumericTypeConstraint(maxNumberDecimalsNameInAST, value.toString)
 }

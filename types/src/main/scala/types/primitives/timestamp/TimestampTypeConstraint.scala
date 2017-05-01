@@ -8,8 +8,9 @@ import types.primitives.Constraint
 /**
   * Represents a numeric type constraint.
   */
-private[types] case class TimestampTypeConstraint(name: String,
-                                                  value: String) extends Constraint[String]
+private[types] case class TimestampTypeConstraint(override val name: String,
+                                                  override val value: String
+                                                 ) extends Constraint(name, value)
 
 /**
   * List of all the valid timestamp constraints.
