@@ -42,7 +42,7 @@ case class NumericType(override val typeName: String,
     * constraint is repeated replaces it with the new one.
     */
   private[this] def withConstraint(constraint: NumericTypeConstraint): NumericType = {
-    val otherConstraints = this.constraints.filterNot(_.name == constraint.name)
+    @inline val otherConstraints = this.constraints.filterNot(_.name == constraint.name)
     NumericType(otherConstraints :+ constraint: _*)
   }
 }
