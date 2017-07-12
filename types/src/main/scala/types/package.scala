@@ -1,4 +1,5 @@
 import types.primitives.numeric.NumericTypes
+import types.primitives.text.TextTypes
 import types.primitives.timestamp.TimestampTypes
 
 /**
@@ -8,7 +9,8 @@ package object types extends types
 
 trait types
   extends NumericTypes
-    with TimestampTypes {
+    with TimestampTypes
+    with TextTypes {
 
   /**
     * Class representing a 'Now' in the whole framework implementation.
@@ -18,5 +20,4 @@ trait types
   @inline case object Now {
     val astName = "NOW()"
   }
-
 }
