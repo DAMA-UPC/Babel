@@ -38,7 +38,7 @@ case class NumericType(override val typeName: String,
     )
 
   /**
-    * Adds a new constraint to the numeric type. If the
+    * Adds a new constraint to the [[NumericType]]. If the
     * constraint is repeated replaces it with the new one.
     */
   private[this] def withConstraint(constraint: NumericTypeConstraint): NumericType = {

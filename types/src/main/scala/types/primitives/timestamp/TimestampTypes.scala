@@ -6,7 +6,13 @@ import java.time.{Instant, LocalDateTime, OffsetDateTime, ZonedDateTime}
 import scala.language.implicitConversions
 
 /**
-  * List of all timestamp sub-types.
+  * @see [[TimestampTypes]]
+  */
+object TimestampTypes extends TimestampTypes
+
+/**
+  * Trait containing all [[TimestampType]]s and all Babel
+  * [[Type]]s implicit conversions.
   */
 trait TimestampTypes {
 

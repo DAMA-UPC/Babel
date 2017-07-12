@@ -6,7 +6,13 @@ import types.primitives.numeric.NumericTypesConstraints.{maxNumberDecimals, maxV
 import scala.language.implicitConversions
 
 /**
-  * List of all numeric types.
+  * @see [[NumericTypes]]
+  */
+object NumericTypes extends NumericTypes
+
+/**
+  * Trait containing all [[NumericType]]s and all Babel
+  * [[Type]]s implicit conversions.
   */
 trait NumericTypes {
 
@@ -23,7 +29,7 @@ trait NumericTypes {
   /**
     * Implicit conversion from [[scala.Byte]] to [[astByte]].
     */
-  implicit def byteToBabelByte(typ: Byte.type): NumericType = astByte
+  implicit def byteToBabelType(typ: Byte.type): NumericType = astByte
 
   /**
     * Represents a 16 bit signed integer on the Babel AST.
@@ -38,7 +44,7 @@ trait NumericTypes {
   /**
     * Implicit conversion from [[scala.Short]] to [[astShort]].
     */
-  implicit def shortToBabelShort(typ: Short.type): NumericType = astShort
+  implicit def shortToBabelType(typ: Short.type): NumericType = astShort
 
   /**
     * Represents a 32 bit signed integer on the Babel AST.
@@ -53,7 +59,7 @@ trait NumericTypes {
   /**
     * Implicit conversion from [[scala.Int]] to [[astInt]].
     */
-  implicit def intToBabelInteger(typ: Int.type): NumericType = astInt
+  implicit def intToBabelType(typ: Int.type): NumericType = astInt
 
   /**
     * Represents a 64 bit signed integer on the Babel AST.
@@ -68,7 +74,7 @@ trait NumericTypes {
   /**
     * Implicit conversion from [[scala.Int]] to [[astLong]].
     */
-  implicit def longToBabelLong(typ: Long.type): NumericType = astLong
+  implicit def longToBabelType(typ: Long.type): NumericType = astLong
 
   /**
     * Represents an integer with an arbitrary precision.
@@ -81,7 +87,7 @@ trait NumericTypes {
   /**
     * Implicit conversion from [[scala.BigInt]] to [[astBigInt]].
     */
-  implicit def bigIntToBabelBigInt(typ: BigInt.type): NumericType = astBigInt
+  implicit def bigIntToBabelType(typ: BigInt.type): NumericType = astBigInt
 
   /**
     * Represents a 32 bit float value on the Babel AST.
@@ -98,7 +104,7 @@ trait NumericTypes {
   /**
     * Implicit conversion from [[scala.Float]] to [[Float]].
     */
-  implicit def floatToBabelFloat(typ: Float.type): NumericType = astFloat
+  implicit def floatToBabelType(typ: Float.type): NumericType = astFloat
 
   /**
     * Represents a 64 bit float value on the Babel AST.
@@ -115,7 +121,7 @@ trait NumericTypes {
   /**
     * Implicit conversion from [[scala.Double]] to [[astDouble]].
     */
-  implicit def doubleToBabelDouble(typ: Double.type): NumericType = astDouble
+  implicit def doubleToBabelType(typ: Double.type): NumericType = astDouble
 
   /**
     * Represents an arbitrary precision float value on the Babel AST.
@@ -125,6 +131,6 @@ trait NumericTypes {
   /**
     * Implicit conversion from [[scala.BigDecimal]] to [[astBigDecimal]].
     */
-  implicit def bigDecimalToBabelBigDecimal(typ: BigDecimal.type): NumericType = astBigDecimal
+  implicit def bigDecimalToBabelType(typ: BigDecimal.type): NumericType = astBigDecimal
 
 }
