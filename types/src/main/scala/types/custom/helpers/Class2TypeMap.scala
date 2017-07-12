@@ -2,6 +2,7 @@ package types
 package custom.helpers
 
 import types.primitives.numeric.NumericTypes
+import types.primitives.timestamp.TimestampTypes
 
 import scala.annotation.compileTimeOnly
 import scala.collection.immutable.Seq
@@ -72,24 +73,34 @@ object Class2TypeMap {
 
 
   private[this] def createClass2MapMethod(ctor: Ctor.Primary): Defn.Def = {
-    q"def typeMap: _root_.scala.collection.immutable.Map[String, types.Type] = ${methodBody(ctor)}"
+    q"def typeMap: _root_.scala.collection.immutable.Map[String, types.Type] = { ${methodBody(ctor)} }"
   }
 
+  // TODO: Add Date type as soon as it is implemented.
+  // TODO: Add UUID type as soon as it is implemented.
   private[custom] def methodBody(ctor: Ctor.Primary): Term.Apply = {
 
-    val methodName = "types.primitives.numeric.NumericTypes.typeNameToBabelType"
-
     val namesToValues: Seq[Term.Tuple] = ctor.paramss.flatten.map {
-      (param: Param) =>
+      (param: Param) => {
 
         val typeName: String = param.decltpe.get.toString()
 
         val isNumericType = NumericTypes.typeNameToBabelType(typeName).isDefined
+        val isTimeType = TimestampTypes.typeNameToBabelType(typeName).isDefined
+        val isCharType = typeName == "Char"
 
-        println(s"\n\nMUAAAAAAAA: '$typeName'\n\n")
+        val isTextType = typeName == "String"
 
-        q"(${param.name.syntax}, ${Term.Name(typeName)})"
+        if (isNumericType || isCharType || isTimeType) {
+          q"(${param.name.syntax}, ${Term.Name(typeName)})"
+        } else if (isTextType) {
+          q"(${param.name.syntax}, classOf[String])"
+        } else {
+          abort(s"Type '$typeName' is unsupported")
+        }
+      }
     }
-    q"_root_.scala.collection.immutable.Map[String, types.Type](..$namesToValues)"
+
+    q"scala.collection.immutable.SortedMap[String, types.Type](..$namesToValues)"
   }
 }

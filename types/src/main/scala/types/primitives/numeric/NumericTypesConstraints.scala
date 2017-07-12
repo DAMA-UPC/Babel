@@ -15,8 +15,8 @@ sealed case class NumericTypeConstraint private(override val name: String,
   */
 private[types] object NumericTypesConstraints {
 
-  @inline private[this] val minValueNameInAST = "minValue"
-  @inline private[this] val maxValueNameInAST = "maxValue"
+  @inline private[this] val minValueNameInAST = "MinValue"
+  @inline private[this] val maxValueNameInAST = "MaxValue"
   @inline private[this] val maxNumberDecimalsNameInAST = "MaxNumberDecimals"
 
   /**
