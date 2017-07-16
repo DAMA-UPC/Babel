@@ -44,7 +44,7 @@ object Class2Map {
       }
       val toMapImpl: Term =
         q"_root_.scala.collection.Map[String, Any](..$namesToValues)"
-      val method =
+      val method : Defn.Def =
         q"def toMap: _root_.scala.collection.Map[String, Any] = $toMapImpl"
       val templateStats: Seq[Stat] = method +: template.stats.getOrElse(Nil)
       cls.copy(templ = template.copy(stats = Some(templateStats)))

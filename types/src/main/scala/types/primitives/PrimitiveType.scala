@@ -1,5 +1,7 @@
 package types.primitives
 
+import io.circe.Json
+import io.circe.syntax._
 import types.Type
 
 /**
@@ -8,6 +10,11 @@ import types.Type
   * all programming languages, like the numeric literals or the Strings.
   */
 trait PrimitiveType[C <: Constraint] extends Type {
+
+  override lazy val structureJson: Json =
+    Map("typeName" -> typeName).asJsonObject
+      .add("constraints", constraints.map(_.asJson).asJson
+    ).asJson
 
   /**
     * Primitive types constraints.

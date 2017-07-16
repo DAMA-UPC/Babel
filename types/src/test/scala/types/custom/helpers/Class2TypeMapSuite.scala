@@ -1,7 +1,5 @@
 package types.custom.helpers
 
-import java.time.LocalDateTime
-
 import org.specs2.mutable.Specification
 import types._
 
@@ -33,13 +31,15 @@ class Class2TypeMapSuite extends Specification {
       val testLong = LongTest.typeMap must beEqualTo(Map[String, Type]("value" -> Long))
 
       @Class2TypeMap class BigIntTest(value: BigInt)
-      val testBigInt = BigIntTest.typeMap must beEqualTo(Map[String, Type]("value" -> BigInt))
+      val testBigInt =
+        BigIntTest.typeMap must beEqualTo(Map[String, Type]("value" -> BigInt))
 
       @Class2TypeMap class FloatTest(value: Float)
       val testFloat = FloatTest.typeMap must beEqualTo(Map[String, Type]("value" -> Float))
 
       @Class2TypeMap class DoubleTest(value: Double)
-      val testDouble = DoubleTest.typeMap must beEqualTo(Map[String, Type]("value" -> Double))
+      val testDouble =
+        DoubleTest.typeMap must beEqualTo(Map[String, Type]("value" -> Double))
 
       @Class2TypeMap class BigDecimalTest(value: BigDecimal)
       val testBigDecimal =
@@ -49,16 +49,17 @@ class Class2TypeMapSuite extends Specification {
         testBigInt && testFloat && testDouble && testBigDecimal
     }
 
+    /*
     "work with all time types" in {
 
-    /*  @Class2TypeMap class LocalDateTest(value: LocalDateTime)
+      @Class2TypeMap class LocalDateTest(value: LocalDateTime)
       val testLocalDateTimeTest =
         LocalDateTimeTest.typeMap must beEqualTo(
           Map[String, Type]("value" -> classOf[LocalDateTime])
         )
       testLocalDateTimeTest
-    */
     }
+    */
 
     "work with case classes" in {
       @Class2TypeMap case class TestCaseClass(value: Int)

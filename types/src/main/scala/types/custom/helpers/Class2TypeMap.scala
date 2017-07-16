@@ -42,25 +42,42 @@ object Class2TypeMap {
     * Implementation of the [[Class2TypeMap]] macro annotation expansion.
     */
   val impl: (Stat) => Block = {
-    case Term.Block(Seq(cls@Defn.Class(_, _, Nil, ctor, _), companion: Defn.Object)) =>
+    case Term.Block(Seq(cls@Defn.Class(_, _, Nil, ctor, methods), companion: Defn.Object)) =>
       // Annotating a class or case class without parameters which already haves
       // a companion object.
       val class2TypeMapMethod = createClass2MapMethod(ctor)
-      val templateStats: Seq[Stat] =
+
+      // Adds the method to the class.
+      val classMethods: Seq[Stat] = class2TypeMapMethod +: methods.stats.getOrElse(Nil)
+      val newClass =
+        cls.copy(templ = methods.copy(stats = Some(classMethods)))
+
+      // Adds the method to the companion object.
+      val companionObjectMethods: Seq[Stat] =
         class2TypeMapMethod +: companion.templ.stats.getOrElse(Nil)
       val newCompanion = companion.copy(
-        templ = companion.templ.copy(stats = Some(templateStats)))
+        templ = companion.templ.copy(stats = Some(companionObjectMethods)))
 
-      Term.Block(Seq(cls, newCompanion))
+      // Returns the new class and the companion object with the new method.
+      Term.Block(Seq(newClass, newCompanion))
+
     case Term.Block(_) =>
       // Annotating a class or case class with parameters is forbidden
       abort("@ClassTypeMap is not compatible with classes with type parameters")
 
-    case cls@Defn.Class(_, name, Nil, ctor, _) =>
-      // Annotating a class or a case class without parameters.
+    case cls@Defn.Class(_, name, Nil, ctor, methods) =>
+
+      // Annotating a class or a case class without companion object.
       val class2TypeMapMethod = createClass2MapMethod(ctor)
+
+      // Adds the method to the class.
+      val classMethods: Seq[Stat] = class2TypeMapMethod +: methods.stats.getOrElse(Nil)
+      val newClass =
+        cls.copy(templ = methods.copy(stats = Some(classMethods)))
+
+      // Adds the method to the companion object.
       val companion = q"object ${Term.Name(name.value)} { $class2TypeMapMethod }"
-      Block(Seq(cls, companion))
+      Block(Seq(newClass, companion))
 
     case Defn.Class(_, _, tParams, _, _) if tParams.nonEmpty =>
       // Class with parameters
