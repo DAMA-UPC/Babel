@@ -58,29 +58,37 @@ object StructureDefinitionGenerator {
   val impl: (Stat) => Block = {
     (defn: Stat) => {
       defn match {
-        case Term.Block(Seq(cls@Defn.Class(_, name, _, ctor, _), companion: Defn.Object)) =>
-          // companion object exists
-          val methodsToAdd: Seq[Defn.Def] = {
-            Seq(
-              definitionJsonMethod(name, ctor)
-            )
-          }
-          val templateStats: Seq[Stat] = {
-            methodsToAdd ++ companion.templ.stats.getOrElse(Nil)
-          }
+        // Companion object exist
+        case Term.Block(Seq(cls@Defn.Class(_, name, _, ctor, template), companion: Defn.Object)) =>
+
+          val methodToAdd = definitionJsonCompanionObjectMethod(name, ctor)
+
+          // Adds the method to the class.
+          val newClsMethod = definionJsonClassMethod(name)
+          val clsMethods: Seq[Stat] = template.stats.getOrElse(Nil) :+ newClsMethod
+          val newClass = cls.copy(templ = template.copy(stats = Some(clsMethods)))
+
+          // Adds the method to the companion object
+          val companionMethods: Seq[Stat] = companion.templ.stats.getOrElse(Nil) :+ methodToAdd
           val newCompanion = companion.copy(
-            templ = companion.templ.copy(stats = Some(templateStats))
+            templ = companion.templ.copy(stats = Some(companionMethods))
           )
-          Term.Block(Seq(cls, newCompanion))
-        case cls@Defn.Class(_, name, _, ctor, _) =>
+          Term.Block(Seq(newClass, newCompanion))
+
+        // Companion object does not exist yet.
+        case cls@Defn.Class(_, name, _, ctor, template) =>
+
+          val methodToAdd = definitionJsonCompanionObjectMethod(name, ctor)
+
+          // Adds the method to the class.
+          val newClsMethod = definionJsonClassMethod(name)
+          val clsMethods: Seq[Stat] = template.stats.getOrElse(Nil) :+ newClsMethod
+          val newClass = cls.copy(templ = template.copy(stats = Some(clsMethods)))
+
           // companion object does not exists
           val companion =
-            q"""
-                    object ${Term.Name(name.value)} {
-                        ${definitionJsonMethod(name, ctor)}
-                    }
-                    """
-          Term.Block(Seq(cls, companion))
+            q"object ${Term.Name(name.value)} { $methodToAdd }"
+          Term.Block(Seq(newClass, companion))
         case _ =>
           println(defn.structure)
           abort("@StructureDefinitionGenerator must annotate a class.")
@@ -88,20 +96,25 @@ object StructureDefinitionGenerator {
     }
   }
 
+  private[this] def definionJsonClassMethod(name: Name): Defn.Def = {
+    val className = Term.Name(name.value)
+    q"def structureJson : _root_.io.circe.Json = $className.structureJson"
+  }
+
   /**
     * Generates the JSON definition method.
     */
-  private[this] def definitionJsonMethod(name: Name, ctor: Ctor.Primary): Defn.Def = {
+  private[this] def definitionJsonCompanionObjectMethod(name: Name,
+                                                        ctor: Ctor.Primary): Defn.Def = {
 
     val className = Term.Name("\"" + name.value + "\"")
 
     q"""
-       def structureJson : _root_.io.circe.Json = {
+        def structureJson : _root_.io.circe.Json = {
 
           val typeMap = ${Class2TypeMap.methodBody(ctor)}
 
           import _root_.io.circe._
-
           import _root_.io.circe.syntax._
 
           val objectTypesJson =

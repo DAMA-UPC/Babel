@@ -28,6 +28,7 @@ lazy val dependencies: Seq[Def.Setting[_]] = Seq(
       "io.circe" %% "circe-core" % circeVersion,
       "io.circe" %% "circe-generic" % circeVersion,
       "io.circe" %% "circe-parser" % circeVersion,
+      "io.circe" %% "circe-java8" % circeVersion,
       // Specs2 Test Framework - https://etorreborre.github.io/specs2/
       "org.specs2" %% "specs2-core" % specs2Version % "test",
       "org.specs2" %% "specs2-matcher-extra" % specs2Version % "test",

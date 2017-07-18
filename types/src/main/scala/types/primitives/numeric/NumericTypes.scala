@@ -6,11 +6,6 @@ import types.primitives.numeric.NumericTypesConstraints.{maxNumberDecimals, maxV
 import scala.language.implicitConversions
 
 /**
-  * @see [[NumericTypes]]
-  */
-object NumericTypes extends NumericTypes
-
-/**
   * Trait containing all [[NumericType]]s and all Babel
   * [[Type]]s implicit conversions.
   */
@@ -132,5 +127,21 @@ trait NumericTypes {
     * Implicit conversion from [[scala.BigDecimal]] to [[astBigDecimal]].
     */
   implicit def bigDecimalToBabelType(typ: BigDecimal.type): NumericType = astBigDecimal
+}
 
+object NumericTypes extends NumericTypes {
+
+  def typeNameToBabelType(typeName: String): Option[NumericType] = {
+    typeName match {
+      case "Byte" => Some(Byte)
+      case "Short" => Some(Short)
+      case "Int" => Some(Int)
+      case "Long" => Some(Long)
+      case "BigInt" => Some(BigInt)
+      case "Float" => Some(Float)
+      case "Double" => Some(Double)
+      case "BigDecimal" => Some(BigDecimal)
+      case _ => None
+    }
+  }
 }

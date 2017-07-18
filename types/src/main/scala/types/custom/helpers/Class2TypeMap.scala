@@ -1,4 +1,8 @@
-package types.custom.helpers
+package types
+package custom.helpers
+
+import types.primitives.numeric.NumericTypes
+import types.primitives.timestamp.TimestampTypes
 
 import scala.annotation.compileTimeOnly
 import scala.collection.immutable.Seq
@@ -20,8 +24,8 @@ import scala.meta._
   * class Example(a: Int, b: String)
   *
   * object Example {
-  *   def typeMap: _root_.scala.collection.Map[String, Any] =
-  *     _root_.scala.collection.Map(("a", Int), ("b", String))
+  *   def typeMap: _root_.scala.collection.Map[String, Type] =
+  *     _root_.scala.collection.Map(("a", Int.type), ("b", String.type))
   * }}}
   */
 @compileTimeOnly("@Class2TypeMap not expanded")
@@ -38,25 +42,42 @@ object Class2TypeMap {
     * Implementation of the [[Class2TypeMap]] macro annotation expansion.
     */
   val impl: (Stat) => Block = {
-    case Term.Block(Seq(cls@Defn.Class(_, _, Nil, ctor, _), companion: Defn.Object)) =>
+    case Term.Block(Seq(cls@Defn.Class(_, _, Nil, ctor, methods), companion: Defn.Object)) =>
       // Annotating a class or case class without parameters which already haves
       // a companion object.
       val class2TypeMapMethod = createClass2MapMethod(ctor)
-      val templateStats: Seq[Stat] =
+
+      // Adds the method to the class.
+      val classMethods: Seq[Stat] = class2TypeMapMethod +: methods.stats.getOrElse(Nil)
+      val newClass =
+        cls.copy(templ = methods.copy(stats = Some(classMethods)))
+
+      // Adds the method to the companion object.
+      val companionObjectMethods: Seq[Stat] =
         class2TypeMapMethod +: companion.templ.stats.getOrElse(Nil)
       val newCompanion = companion.copy(
-        templ = companion.templ.copy(stats = Some(templateStats)))
-      Term.Block(Seq(cls, newCompanion))
+        templ = companion.templ.copy(stats = Some(companionObjectMethods)))
+
+      // Returns the new class and the companion object with the new method.
+      Term.Block(Seq(newClass, newCompanion))
 
     case Term.Block(_) =>
       // Annotating a class or case class with parameters is forbidden
       abort("@ClassTypeMap is not compatible with classes with type parameters")
 
-    case cls@Defn.Class(_, name, Nil, ctor, _) =>
-      // Annotating a class or a case class without parameters.
+    case cls@Defn.Class(_, name, Nil, ctor, methods) =>
+
+      // Annotating a class or a case class without companion object.
       val class2TypeMapMethod = createClass2MapMethod(ctor)
+
+      // Adds the method to the class.
+      val classMethods: Seq[Stat] = class2TypeMapMethod +: methods.stats.getOrElse(Nil)
+      val newClass =
+        cls.copy(templ = methods.copy(stats = Some(classMethods)))
+
+      // Adds the method to the companion object.
       val companion = q"object ${Term.Name(name.value)} { $class2TypeMapMethod }"
-      Block(Seq(cls, companion))
+      Block(Seq(newClass, companion))
 
     case Defn.Class(_, _, tParams, _, _) if tParams.nonEmpty =>
       // Class with parameters
@@ -69,16 +90,34 @@ object Class2TypeMap {
 
 
   private[this] def createClass2MapMethod(ctor: Ctor.Primary): Defn.Def = {
-    q"def typeMap: _root_.scala.collection.immutable.Map[String, String] = ${methodBody(ctor)}"
+    q"def typeMap: _root_.scala.collection.immutable.Map[String, types.Type] = { ${methodBody(ctor)} }"
   }
 
+  // TODO: Add Date type as soon as it is implemented.
+  // TODO: Add UUID type as soon as it is implemented.
   private[custom] def methodBody(ctor: Ctor.Primary): Term.Apply = {
 
     val namesToValues: Seq[Term.Tuple] = ctor.paramss.flatten.map {
-      (param: Param) =>
-        val valueType: String = "\"".concat(param.decltpe.map(_.toString()).get).concat("\"")
-        q"(${param.name.syntax}, ${Term.Name(valueType)})"
+      (param: Param) => {
+
+        val typeName: String = param.decltpe.get.toString()
+
+        val isNumericType = NumericTypes.typeNameToBabelType(typeName).isDefined
+        val isTimeType = TimestampTypes.typeNameToBabelType(typeName).isDefined
+        val isCharType = typeName == "Char"
+
+        val isTextType = typeName == "String"
+
+        if (isNumericType || isCharType || isTimeType) {
+          q"(${param.name.syntax}, ${Term.Name(typeName)})"
+        } else if (isTextType) {
+          q"(${param.name.syntax}, classOf[String])"
+        } else {
+          abort(s"Type '$typeName' is unsupported")
+        }
+      }
     }
-    q"_root_.scala.collection.immutable.Map[String, String](..$namesToValues)"
+
+    q"scala.collection.immutable.SortedMap[String, types.Type](..$namesToValues)"
   }
 }

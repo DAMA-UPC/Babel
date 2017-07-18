@@ -114,8 +114,8 @@ private object MacroImpl {
 
         // Adds to the class the 'CustomType' interface as parent.
         val Template(_, classParents, _, _) = classTemplate
-        val newCustomTypeParents = ctor"_root_.types.custom.CustomTypeImpl"
-        val newClassTemplate = classTemplate.copy(parents = classParents :+ newCustomTypeParents)
+        val newCustomTypeParent = ctor"types.custom.CustomTypeImpl"
+        val newClassTemplate = classTemplate.copy(parents = classParents :+ newCustomTypeParent)
 
         // Implements the 'typeName' method in the type class and generates the new class.
         val classTemplateStats = nameMethod +: newClassTemplate.stats.getOrElse(Nil)
@@ -127,9 +127,11 @@ private object MacroImpl {
         val Defn.Object(_, _, companionTemplate) = companion
         val Template(_, companionParents, _, _) = companionTemplate
         val classTypeName: Name = Type.Name(cls.name.value)
-        val companionConstructor = ctor"_root_.types.custom.CustomTypeCompanion[$classTypeName]"
-        val newCompanionParents = companionParents :+ companionConstructor
-        val newCompanionTemplate = companionTemplate.copy(parents = newCompanionParents)
+        val newCompanionParent = ctor"_root_.types.custom.CustomTypeCompanion[$classTypeName]"
+
+        val newCompanionTemplate = companionTemplate.copy(
+          parents = companionParents :+ newCompanionParent
+        )
 
         // Implements the 'typeName' method in the companion object and updates it.
         val companionTemplateStats = nameMethod +: newCompanionTemplate.stats.getOrElse(Nil)

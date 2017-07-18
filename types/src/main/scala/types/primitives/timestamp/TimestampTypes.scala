@@ -6,11 +6,6 @@ import java.time.{Instant, LocalDateTime, OffsetDateTime, ZonedDateTime}
 import scala.language.implicitConversions
 
 /**
-  * @see [[TimestampTypes]]
-  */
-object TimestampTypes extends TimestampTypes
-
-/**
   * Trait containing all [[TimestampType]]s and all Babel
   * [[Type]]s implicit conversions.
   */
@@ -65,4 +60,20 @@ trait TimestampTypes {
   implicit def zonedDateTimeToAstType(typ: Class[ZonedDateTime]): TimestampType =
     astZonedDateTime
 
+}
+
+/**
+  * @see [[TimestampTypes]]
+  */
+object TimestampTypes extends TimestampTypes {
+
+  def typeNameToBabelType(typeName: String): Option[TimestampType] = {
+    typeName match {
+      case "LocalDateTime" => Some(classOf[LocalDateTime])
+      case "OffsetDateTime" => Some(classOf[OffsetDateTime])
+      case "Instant" => Some(classOf[Instant])
+      case "ZonedDateTime" => Some(classOf[ZonedDateTime])
+      case _ => None
+    }
+  }
 }
