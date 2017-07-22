@@ -1,6 +1,6 @@
 import io.circe.Encoder
 import types.Type
-import io.circe.syntax._
+import types.primitives.date.DateTypes
 import types.primitives.numeric.NumericTypes
 import types.primitives.text.TextTypes
 import types.primitives.timestamp.TimestampTypes
@@ -13,20 +13,22 @@ package object types extends types
 trait types
   extends NumericTypes
     with TimestampTypes
-    with TextTypes {
+    with TextTypes
+    with DateTypes {
 
   /**
     * Implicit [[Encoder]] for [[Type]].
     */
-  implicit final val typeEncoder: Encoder[types.Type] =
+  implicit val typeEncoder: Encoder[types.Type] =
     (a: Type) => a.structureJson
 
   /**
     * Class representing a 'Now' in the whole framework implementation.
     * Can also be used for constraining the time to the current time when
-    * working with timestamp types.
+    * working with the [[TimestampTypes]] and the [[DateTypes]].
     */
   @inline case object Now {
     val astName = "NOW()"
   }
+
 }

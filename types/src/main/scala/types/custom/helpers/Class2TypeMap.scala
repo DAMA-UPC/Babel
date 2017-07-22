@@ -1,6 +1,7 @@
 package types
 package custom.helpers
 
+import types.primitives.date.DateTypes
 import types.primitives.numeric.NumericTypes
 import types.primitives.text.TextTypes
 import types.primitives.timestamp.TimestampTypes
@@ -97,7 +98,6 @@ object Class2TypeMap {
        }
      """
 
-  // TODO: Add Date type as soon as it is implemented.
   // TODO: Add UUID type as soon as it is implemented.
   private[custom] def methodBody(ctor: Ctor.Primary): Term.Apply = {
 
@@ -111,10 +111,11 @@ object Class2TypeMap {
         val isTimeType = TimestampTypes.typeNameToBabelType(typeName).isDefined
         val isTextType = TextTypes.typeNameToBabelType(typeName).isDefined
         val isCharType = if (!isTextType) false else typeName.endsWith("Char")
+        val isDateType = DateTypes.typeNameToBabelType(typeName).isDefined
 
         if (isNumericType || isCharType) {
           q"($paramName, ${Term.Name(typeName)})"
-        } else if (isTimeType || isTextType) {
+        } else if (isTimeType || isTextType || isDateType) {
           q"($paramName, classOf[${Type.Name(typeName)}])"
         } else {
           abort(s"Type '$typeName' is unsupported")

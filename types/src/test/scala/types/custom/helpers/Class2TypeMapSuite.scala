@@ -1,6 +1,7 @@
 package types.custom.helpers
 
-import java.time.{LocalDateTime, OffsetDateTime, Instant, ZonedDateTime}
+import java.time._
+import java.util.Date
 
 import org.specs2.mutable.Specification
 import types._
@@ -92,6 +93,22 @@ class Class2TypeMapSuite extends Specification {
         )
 
       testStringType && testCharType
+    }
+    "work with all date types" in {
+
+      @Class2TypeMap class JavaDateTest(value: Date)
+      val testJavaDateType =
+        JavaDateTest.typeMap must beEqualTo(
+          Map[String, Type]("value" -> classOf[Date])
+        )
+
+      @Class2TypeMap class LocalDateTest(value: LocalDate)
+      val testLocalDateType =
+        LocalDateTest.typeMap must beEqualTo(
+          Map[String, Type]("value" -> classOf[LocalDate])
+        )
+
+      testJavaDateType && testLocalDateType
     }
     "work with case classes" in {
       @Class2TypeMap case class TestCaseClass(value: Int)
