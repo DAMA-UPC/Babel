@@ -1,5 +1,7 @@
 package types.custom.helpers
 
+import java.time.{LocalDateTime, OffsetDateTime, Instant, ZonedDateTime}
+
 import org.specs2.mutable.Specification
 import types._
 
@@ -12,7 +14,6 @@ class Class2TypeMapSuite extends Specification {
 
   // TODO: Add Date type as soon as it is implemented
   // TODO: Add Identifier type as soon as it is implemented
-  // TODO: Implement tests for time types
 
   "Macro annotation expansion" should {
 
@@ -48,19 +49,50 @@ class Class2TypeMapSuite extends Specification {
       testByte && testShort && testInt && testLong &&
         testBigInt && testFloat && testDouble && testBigDecimal
     }
+    "work with all timestamp types" in {
 
-    /*
-    "work with all time types" in {
-
-      @Class2TypeMap class LocalDateTest(value: LocalDateTime)
-      val testLocalDateTimeTest =
+      @Class2TypeMap class LocalDateTimeTest(value: LocalDateTime)
+      val testLocalDateTimeType =
         LocalDateTimeTest.typeMap must beEqualTo(
           Map[String, Type]("value" -> classOf[LocalDateTime])
         )
-      testLocalDateTimeTest
-    }
-    */
 
+      @Class2TypeMap class OffsetDateTimeTest(value: OffsetDateTime)
+      val testOffsetDateTimeType =
+        OffsetDateTimeTest.typeMap must beEqualTo(
+          Map[String, Type]("value" -> classOf[OffsetDateTime])
+        )
+
+      @Class2TypeMap class InstantDateTest(value: Instant)
+      val testInstantType =
+        InstantDateTest.typeMap must beEqualTo(
+          Map[String, Type]("value" -> classOf[Instant])
+        )
+
+      @Class2TypeMap class ZonedDateTimeTest(value: ZonedDateTime)
+      val testZonedDateTimeType =
+        ZonedDateTimeTest.typeMap must beEqualTo(
+          Map[String, Type]("value" -> classOf[ZonedDateTime])
+        )
+
+      testLocalDateTimeType && testOffsetDateTimeType && testInstantType && testZonedDateTimeType
+    }
+    "work with all text types" in {
+
+      @Class2TypeMap class StringTypeTest(value: String)
+      val testStringType =
+        StringTypeTest.typeMap must beEqualTo(
+          Map[String, Type]("value" -> classOf[String])
+        )
+
+      @Class2TypeMap class CharTypeTest(value: Char)
+      val testCharType =
+        CharTypeTest.typeMap must beEqualTo(
+          Map[String, Type]("value" -> Char)
+        )
+
+      testStringType && testCharType
+    }
     "work with case classes" in {
       @Class2TypeMap case class TestCaseClass(value: Int)
       TestCaseClass.typeMap must beEqualTo(Map[String, Type]("value" -> Int))
@@ -81,6 +113,25 @@ class Class2TypeMapSuite extends Specification {
         )
       ))
     }
+    "work when using the fully qualified primitive type (Such as 'java.time.LocalDate')" in {
+
+      @Class2TypeMap class LocalDateTimeTest(value: java.time.LocalDateTime)
+      val testLocalDateTimeType =
+        LocalDateTimeTest.typeMap must beEqualTo(
+          Map[String, Type]("value" -> classOf[LocalDateTime])
+        )
+
+      @Class2TypeMap class ByteTest(value: scala.Byte)
+      val testByteType = ByteTest.typeMap must beEqualTo(Map[String, Type]("value" -> Byte))
+
+      @Class2TypeMap class CharTypeTest(value: scala.Char)
+      val testCharType =
+        CharTypeTest.typeMap must beEqualTo(
+          Map[String, Type]("value" -> Char)
+        )
+
+      testLocalDateTimeType && testByteType && testCharType
+    }
     "work when already having a companion object" in {
 
       val expectedMethodResult: Int = 42
@@ -98,4 +149,3 @@ class Class2TypeMapSuite extends Specification {
     }
   }
 }
-

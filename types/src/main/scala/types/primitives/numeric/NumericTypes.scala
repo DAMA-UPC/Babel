@@ -2,6 +2,7 @@ package types
 package primitives.numeric
 
 import types.primitives.numeric.NumericTypesConstraints.{maxNumberDecimals, maxValue, minValue}
+import types.utils.TypeNameUtils
 
 import scala.language.implicitConversions
 
@@ -131,7 +132,7 @@ trait NumericTypes {
 object NumericTypes extends NumericTypes {
 
   private[types] def typeNameToBabelType(typeName: String): Option[NumericType] = {
-    typeName match {
+    TypeNameUtils.typeNameWithoutPackagePredecessors(typeName) match {
       case "Byte" => Some(Byte)
       case "Short" => Some(Short)
       case "Int" => Some(Int)

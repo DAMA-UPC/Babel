@@ -3,6 +3,8 @@ package primitives.timestamp
 
 import java.time.{Instant, LocalDateTime, OffsetDateTime, ZonedDateTime}
 
+import types.utils.TypeNameUtils
+
 import scala.language.implicitConversions
 
 /**
@@ -67,7 +69,7 @@ trait TimestampTypes {
 object TimestampTypes extends TimestampTypes {
 
   private[types] def typeNameToBabelType(typeName: String): Option[TimestampType] = {
-    typeName match {
+    TypeNameUtils.typeNameWithoutPackagePredecessors(typeName) match {
       case "LocalDateTime" => Some(classOf[LocalDateTime])
       case "OffsetDateTime" => Some(classOf[OffsetDateTime])
       case "Instant" => Some(classOf[Instant])

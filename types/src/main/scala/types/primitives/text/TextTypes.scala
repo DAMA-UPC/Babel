@@ -3,13 +3,9 @@ package types.primitives.text
 import java.nio.charset.Charset
 
 import types.Type
+import types.utils.TypeNameUtils
 
 import scala.language.implicitConversions
-
-/**
-  * @see [[TextTypes]]
-  */
-object TextTypes extends TextTypes
 
 /**
   * Trait containing all [[TextType]]s to Babel [[Type]]s implicit conversions.
@@ -41,4 +37,18 @@ trait TextTypes {
     */
   implicit def charToBabelType(typ: Char.type): TextType = astCharacterTextType
 
+}
+
+/**
+  * @see [[TextTypes]]
+  */
+object TextTypes extends TextTypes {
+
+  private[types] def typeNameToBabelType(typeName: String): Option[TextType] = {
+    TypeNameUtils.typeNameWithoutPackagePredecessors(typeName) match {
+      case "Char" => Some(astCharacterTextType)
+      case "String" => Some(astStringTextType)
+      case _ => None
+    }
+  }
 }

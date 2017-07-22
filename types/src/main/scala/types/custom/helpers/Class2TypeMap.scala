@@ -2,6 +2,7 @@ package types
 package custom.helpers
 
 import types.primitives.numeric.NumericTypes
+import types.primitives.text.TextTypes
 import types.primitives.timestamp.TimestampTypes
 
 import scala.annotation.compileTimeOnly
@@ -89,9 +90,12 @@ object Class2TypeMap {
   }
 
 
-  private[this] def createClass2MapMethod(ctor: Ctor.Primary): Defn.Def = {
-    q"def typeMap: _root_.scala.collection.immutable.Map[String, types.Type] = { ${methodBody(ctor)} }"
-  }
+  private[this] def createClass2MapMethod(ctor: Ctor.Primary): Defn.Def =
+    q"""
+       def typeMap: _root_.scala.collection.immutable.Map[String, types.Type] = {
+          ${methodBody(ctor)}
+       }
+     """
 
   // TODO: Add Date type as soon as it is implemented.
   // TODO: Add UUID type as soon as it is implemented.
@@ -100,18 +104,18 @@ object Class2TypeMap {
     val namesToValues: Seq[Term.Tuple] = ctor.paramss.flatten.map {
       (param: Param) => {
 
+        val paramName: String = param.name.syntax
         val typeName: String = param.decltpe.get.toString()
 
         val isNumericType = NumericTypes.typeNameToBabelType(typeName).isDefined
         val isTimeType = TimestampTypes.typeNameToBabelType(typeName).isDefined
-        val isCharType = typeName == "Char"
+        val isTextType = TextTypes.typeNameToBabelType(typeName).isDefined
+        val isCharType = if (!isTextType) false else typeName.endsWith("Char")
 
-        val isTextType = typeName == "String"
-
-        if (isNumericType || isCharType || isTimeType) {
-          q"(${param.name.syntax}, ${Term.Name(typeName)})"
-        } else if (isTextType) {
-          q"(${param.name.syntax}, classOf[String])"
+        if (isNumericType || isCharType) {
+          q"($paramName, ${Term.Name(typeName)})"
+        } else if (isTimeType || isTextType) {
+          q"($paramName, classOf[${Type.Name(typeName)}])"
         } else {
           abort(s"Type '$typeName' is unsupported")
         }
