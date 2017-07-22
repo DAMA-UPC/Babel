@@ -7,9 +7,9 @@ import types.primitives.PrimitiveType
 /**
   * Represents a Babel primitive type representing a text [[String]] in the AST.
   */
-case class TextType(override val typeName: String,
-                    override val constraints: Seq[TextTypeConstraints]
-                   ) extends PrimitiveType[TextTypeConstraints] {
+case class TextType private[types] (override val typeName: String,
+                                    override val constraints: Seq[TextTypeConstraint]
+                                   ) extends PrimitiveType[TextTypeConstraint] {
 
   /**
     * Copies the type adding/replacing the minimum length constraint
@@ -26,7 +26,7 @@ case class TextType(override val typeName: String,
     withConstraint(TextTypeConstraints.maxLength(maxLength))
 
   /**
-    * Copies the type adding/replacing the encording constraint
+    * Copies the type adding/replacing the encoding constraint
     * from the [[TextType]].
     */
   def withEncoding(charset: Charset): TextType =
@@ -36,7 +36,7 @@ case class TextType(override val typeName: String,
     * Adds a new constraint to [[TextType]]. If the
     * constraint is repeated replaces it with the new one.
     */
-  private[this] def withConstraint(constraint: TextTypeConstraints): TextType = {
+  private[this] def withConstraint(constraint: TextTypeConstraint): TextType = {
     @inline val otherConstraints = this.constraints.filterNot(_.name == constraint.name)
     TextType(otherConstraints :+ constraint: _*)
   }
@@ -53,6 +53,6 @@ object TextType {
     * Apply method needed for generating a [[TextType]]
     * from the given constraints.
     */
-  def apply(constraints: TextTypeConstraints*): TextType =
+  private[types] def apply(constraints: TextTypeConstraint*): TextType =
     TextType(typeName, constraints.toSeq)
 }

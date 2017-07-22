@@ -6,9 +6,9 @@ import types.primitives.PrimitiveType
 /**
   * Represents a Numeric type, which represents a primitive type number.
   */
-case class NumericType(override val typeName: String,
-                       override val constraints: Seq[NumericTypeConstraint]
-                      ) extends PrimitiveType[NumericTypeConstraint] {
+case class NumericType private (override val typeName: String,
+                                override val constraints: Seq[NumericTypeConstraint]
+                               ) extends PrimitiveType[NumericTypeConstraint] {
 
   /**
     * Copies the type adding/replacing the minimum value constraint

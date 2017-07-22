@@ -6,8 +6,7 @@ import types.primitives.numeric.NumericTypesConstraints.{maxNumberDecimals, maxV
 import scala.language.implicitConversions
 
 /**
-  * Trait containing all [[NumericType]]s and all Babel
-  * [[Type]]s implicit conversions.
+  * Trait containing all [[NumericType]] to Babel [[Type]]s implicit conversions.
   */
 trait NumericTypes {
 
@@ -131,7 +130,7 @@ trait NumericTypes {
 
 object NumericTypes extends NumericTypes {
 
-  def typeNameToBabelType(typeName: String): Option[NumericType] = {
+  private[types] def typeNameToBabelType(typeName: String): Option[NumericType] = {
     typeName match {
       case "Byte" => Some(Byte)
       case "Short" => Some(Short)

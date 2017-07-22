@@ -1,18 +1,19 @@
-package types.primitives.text
+package types
+package primitives.text
 
 import java.nio.charset.Charset
 
 import types.primitives.Constraint
 
 /**
-  * Represents a numeric type constraint.
+  * Represents a [[TextType]] constraint.
   */
 private[types]
-sealed case class TextTypeConstraints private(typeName: String,
-                                              value: String) extends Constraint(typeName, value)
+sealed case class TextTypeConstraint private(typeName: String,
+                                             value: String) extends Constraint(typeName, value)
 
 /**
-  * List of all the valid numeric constraints.
+  * List of all the valid [[TextTypeConstraint]].
   */
 private[types] object TextTypeConstraints {
 
@@ -21,21 +22,21 @@ private[types] object TextTypeConstraints {
   @inline private[this] val encodingNameInAST = "Encoding"
 
   /**
-    * Sets the minimum possible value of a Number.
+    * Sets the minimum length of the text.
     */
-  def minLength(value: Long): TextTypeConstraints =
-    TextTypeConstraints(minLengthNameInAST, value.toString)
+  def minLength(value: Long): TextTypeConstraint =
+    TextTypeConstraint(minLengthNameInAST, value.toString)
 
   /**
-    * Sets the minimum possible value of a Number.
+    * Sets the maximum length of the text.
     */
-  def maxLength(value: Long): TextTypeConstraints =
-    TextTypeConstraints(maxLengthNameInAST, value.toString)
+  def maxLength(value: Long): TextTypeConstraint =
+    TextTypeConstraint(maxLengthNameInAST, value.toString)
 
   /**
-    * Sets the maximum number of decimals of a Number.
+    * Sets the encoding of the text (UTF-8, Unicode...)
     */
-  def encoding(value: Charset): TextTypeConstraints = {
-    TextTypeConstraints(encodingNameInAST, value.toString)
+  def encoding(value: Charset): TextTypeConstraint = {
+    TextTypeConstraint(encodingNameInAST, value.toString)
   }
 }

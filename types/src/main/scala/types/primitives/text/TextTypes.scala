@@ -12,8 +12,7 @@ import scala.language.implicitConversions
 object TextTypes extends TextTypes
 
 /**
-  * Trait containing all [[TextType-]]s and all Babel
-  * [[Type]]s implicit conversions.
+  * Trait containing all [[TextType]]s to Babel [[Type]]s implicit conversions.
   */
 trait TextTypes {
 
