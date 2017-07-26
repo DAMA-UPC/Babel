@@ -19,8 +19,8 @@ import scala.meta._
   * After:
   * {{{
   * class Example(a: Int, b: String) {
-  *   def toMap: _root_.scala.collection.Map[String, Any] =
-  *     _root_.scala.collection.Map(("a", a), ("b", b))
+  *   def toMap: _root_.scala.collection.immutable.SortedMap[String, Any] =
+  *     _root_.scala.collection.immutable.SortedMap(("a", a), ("b", b))
   * }}}
   */
 @compileTimeOnly("@Class2Map not expanded")
@@ -43,9 +43,9 @@ object Class2Map {
           q"(${param.name.syntax}, ${Term.Name(param.name.value)})"
       }
       val toMapImpl: Term =
-        q"_root_.scala.collection.Map[String, Any](..$namesToValues)"
+        q"_root_.scala.collection.immutable.SortedMap[String, Any](..$namesToValues)"
       val method : Defn.Def =
-        q"def toMap: _root_.scala.collection.Map[String, Any] = $toMapImpl"
+        q"def toMap: _root_.scala.collection.immutable.SortedMap[String, Any] = $toMapImpl"
       val templateStats: Seq[Stat] = method +: template.stats.getOrElse(Nil)
       cls.copy(templ = template.copy(stats = Some(templateStats)))
     case Defn.Class(_, _, tParams, _, _) if tParams.nonEmpty =>
