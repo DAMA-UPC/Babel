@@ -5,10 +5,12 @@ package models
   * @tparam ID with the unique Vertex identifier type.
   */
 trait Edge[ID] {
+
   /**
     * Source [[Vertex.id]]
     */
   val source: ID
+
   /**
     * Target [[Vertex.id]]
     */
@@ -44,8 +46,7 @@ object Edge {
     * @param target @see [[Edge.target]]
     * @tparam ID with the unique Vertex identifier type.
     */
-  case class Undirected[ID](override val source: ID,
-                            override val target: ID) extends Edge[ID] {
+  case class Undirected[ID](override val source: ID, override val target: ID) extends Edge[ID] {
 
     /**
       * Undirected edges are represented on the following format: 'source - target'.
@@ -61,8 +62,7 @@ object Edge {
     * @param target @see [[Edge.target]]
     * @tparam ID with the unique Vertex identifier type.
     */
-  case class Directed[ID](override val source: ID,
-                          override val target: ID) extends Edge[ID] {
+  case class Directed[ID](override val source: ID, override val target: ID) extends Edge[ID] {
 
     /**
       * Undirected edges are represented on the following format: 'source -> target'.

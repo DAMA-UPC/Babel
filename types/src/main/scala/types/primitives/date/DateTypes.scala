@@ -13,9 +13,9 @@ import scala.language.implicitConversions
   */
 trait DateTypes {
 
-  @inline private[this] val defaultDateOnAST : LocalDate = {
-    @inline val defaultMinYearOnAST : Int = 1900
-    @inline val defaultMinYearDayOnAst : Int = 1
+  @inline private[this] val defaultDateOnAST: LocalDate = {
+    @inline val defaultMinYearOnAST: Int = 1900
+    @inline val defaultMinYearDayOnAst: Int = 1
     LocalDate.ofYearDay(defaultMinYearOnAST, defaultMinYearDayOnAst)
   }
 
@@ -23,10 +23,7 @@ trait DateTypes {
     * Represents the default date on the AST.
     */
   private[types] val astDateType: DateType =
-    DateType(
-      DateTypeConstraints.minDate(defaultDateOnAST),
-      DateTypeConstraints.maxDate(Now)
-    )
+    DateType(DateTypeConstraints.minDate(defaultDateOnAST), DateTypeConstraints.maxDate(Now))
 
   /**
     * Implicit conversion from [[Date]] to [[astDateType]].

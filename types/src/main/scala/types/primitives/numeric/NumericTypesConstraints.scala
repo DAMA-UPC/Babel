@@ -5,10 +5,9 @@ import types.primitives.Constraint
 /**
   * Represents a numeric type constraint.
   */
-private[types]
-sealed case class NumericTypeConstraint private(override val name: String,
-                                                value: Number
-                                               ) extends Constraint(name, value)
+private[types] sealed case class NumericTypeConstraint private (override val name: String,
+                                                                value: Number)
+    extends Constraint(name, value)
 
 /**
   * List of all the valid numeric constraints.

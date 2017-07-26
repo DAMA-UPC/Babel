@@ -13,8 +13,6 @@ object TestUtils {
     * Scalacheck arbitrary function for [[java.util.UUID]].
     */
   implicit def arbUUID: Arbitrary[UUID] = {
-    Arbitrary(
-      Gen.delay(UUID.randomUUID)
-    )
+    Arbitrary(Gen.delay(UUID.randomUUID))
   }
 }

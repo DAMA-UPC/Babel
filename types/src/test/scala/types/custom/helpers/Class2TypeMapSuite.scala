@@ -48,7 +48,7 @@ class Class2TypeMapSuite extends Specification {
         BigDecimalTest.typeMap must beEqualTo(Map[String, Type]("value" -> BigDecimal))
 
       testByte && testShort && testInt && testLong &&
-        testBigInt && testFloat && testDouble && testBigDecimal
+      testBigInt && testFloat && testDouble && testBigDecimal
     }
     "work with all timestamp types" in {
 
@@ -66,9 +66,7 @@ class Class2TypeMapSuite extends Specification {
 
       @Class2TypeMap class InstantDateTest(value: Instant)
       val testInstantType =
-        InstantDateTest.typeMap must beEqualTo(
-          Map[String, Type]("value" -> classOf[Instant])
-        )
+        InstantDateTest.typeMap must beEqualTo(Map[String, Type]("value" -> classOf[Instant]))
 
       @Class2TypeMap class ZonedDateTimeTest(value: ZonedDateTime)
       val testZonedDateTimeType =
@@ -82,15 +80,11 @@ class Class2TypeMapSuite extends Specification {
 
       @Class2TypeMap class StringTypeTest(value: String)
       val testStringType =
-        StringTypeTest.typeMap must beEqualTo(
-          Map[String, Type]("value" -> classOf[String])
-        )
+        StringTypeTest.typeMap must beEqualTo(Map[String, Type]("value" -> classOf[String]))
 
       @Class2TypeMap class CharTypeTest(value: Char)
       val testCharType =
-        CharTypeTest.typeMap must beEqualTo(
-          Map[String, Type]("value" -> Char)
-        )
+        CharTypeTest.typeMap must beEqualTo(Map[String, Type]("value" -> Char))
 
       testStringType && testCharType
     }
@@ -98,15 +92,11 @@ class Class2TypeMapSuite extends Specification {
 
       @Class2TypeMap class JavaDateTest(value: Date)
       val testJavaDateType =
-        JavaDateTest.typeMap must beEqualTo(
-          Map[String, Type]("value" -> classOf[Date])
-        )
+        JavaDateTest.typeMap must beEqualTo(Map[String, Type]("value" -> classOf[Date]))
 
       @Class2TypeMap class LocalDateTest(value: LocalDate)
       val testLocalDateType =
-        LocalDateTest.typeMap must beEqualTo(
-          Map[String, Type]("value" -> classOf[LocalDate])
-        )
+        LocalDateTest.typeMap must beEqualTo(Map[String, Type]("value" -> classOf[LocalDate]))
 
       testJavaDateType && testLocalDateType
     }
@@ -119,15 +109,9 @@ class Class2TypeMapSuite extends Specification {
       @Class2TypeMap case class TestWithCaseClass(stringValue: Byte, floatValue: Float)
 
       (TestWithStandardClass.typeMap must beEqualTo(
-        SortedMap[String, Type](
-          "stringValue" -> Byte,
-          "floatValue" -> Float
-        )
+        SortedMap[String, Type]("stringValue" -> Byte, "floatValue" -> Float)
       )) && (TestWithCaseClass.typeMap must beEqualTo(
-        SortedMap[String, Type](
-          "stringValue" -> Byte,
-          "floatValue" -> Float
-        )
+        SortedMap[String, Type]("stringValue" -> Byte, "floatValue" -> Float)
       ))
     }
     "work when using the fully qualified primitive type (Such as 'java.time.LocalDate')" in {
@@ -143,9 +127,7 @@ class Class2TypeMapSuite extends Specification {
 
       @Class2TypeMap class CharTypeTest(value: scala.Char)
       val testCharType =
-        CharTypeTest.typeMap must beEqualTo(
-          Map[String, Type]("value" -> Char)
-        )
+        CharTypeTest.typeMap must beEqualTo(Map[String, Type]("value" -> Char))
 
       testLocalDateTimeType && testByteType && testCharType
     }
@@ -158,10 +140,7 @@ class Class2TypeMapSuite extends Specification {
         def testMethod: Int = expectedMethodResult
       }
       (TestWithCompanionObject.typeMap must beEqualTo(
-        SortedMap[String, Type](
-          "stringValue" -> Byte,
-          "floatValue" -> Float
-        )
+        SortedMap[String, Type]("stringValue" -> Byte, "floatValue" -> Float)
       )) && (TestWithCompanionObject.testMethod must beEqualTo(expectedMethodResult))
     }
   }

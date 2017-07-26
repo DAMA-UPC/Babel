@@ -11,8 +11,9 @@ import types.primitives.text.TextType
   * Represents a Babel primitive type representing a text [[String]] in the AST.
   */
 case class DateType private[types] (override val typeName: String,
-                                    override val constraints: Seq[DateTypeConstraint]
-                                   ) extends PrimitiveType[DateTypeConstraint] {
+                                    override val constraints: Seq[DateTypeConstraint])
+    extends PrimitiveType[DateTypeConstraint] {
+
   /**
     * Copies the type adding/replacing the minimum date constraint
     * from the [[DateType]].

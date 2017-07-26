@@ -9,5 +9,5 @@ trait Vertex[ID] {
   /**
     * Unique identifier for the [[Vertex]] in the generated graph.
     */
-  val id : ID
+  val id: ID
 }

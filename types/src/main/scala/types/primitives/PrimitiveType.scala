@@ -13,8 +13,8 @@ trait PrimitiveType[C <: Constraint] extends Type {
 
   override lazy val structureJson: Json =
     Map("typeName" -> typeName).asJsonObject
-      .add("constraints", constraints.map(_.asJson).asJson
-    ).asJson
+      .add("constraints", constraints.map(_.asJson).asJson)
+      .asJson
 
   /**
     * Primitive types constraints.

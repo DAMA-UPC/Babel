@@ -8,8 +8,8 @@ import types.primitives.PrimitiveType
   * Represents a Babel primitive type representing a text [[String]] in the AST.
   */
 case class TextType private[types] (override val typeName: String,
-                                    override val constraints: Seq[TextTypeConstraint]
-                                   ) extends PrimitiveType[TextTypeConstraint] {
+                                    override val constraints: Seq[TextTypeConstraint])
+    extends PrimitiveType[TextTypeConstraint] {
 
   /**
     * Copies the type adding/replacing the minimum length constraint

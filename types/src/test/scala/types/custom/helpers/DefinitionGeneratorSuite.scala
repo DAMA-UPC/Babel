@@ -14,8 +14,7 @@ class DefinitionGeneratorSuite extends Specification {
       "work with single parameter classes" in {
         @StructureDefinitionGenerator class SingleParameterClass(value: Int)
         SingleParameterClass.structureJson.noSpaces must beEqualTo(
-          JsonUglyfier.uglyfy(
-            """
+          JsonUglyfier.uglyfy("""
               |{
               |  "SingleParameterClass": {
               |    "type": "object",
@@ -40,8 +39,7 @@ class DefinitionGeneratorSuite extends Specification {
               |    }
               |  }
               |}
-            """.stripMargin
-          )
+            """.stripMargin)
         )
       }
       "work with multiple parameter classes" in {
@@ -49,8 +47,7 @@ class DefinitionGeneratorSuite extends Specification {
                                                                    floatValue: Float)
 
         MultipleParameterClass.structureJson.noSpaces must beEqualTo(
-          JsonUglyfier.uglyfy(
-            """
+          JsonUglyfier.uglyfy("""
               |{
               | "MultipleParameterClass": {
               |   "type": "object",
@@ -87,8 +84,7 @@ class DefinitionGeneratorSuite extends Specification {
               |     }
               |   }
               | }
-              |}""".stripMargin
-          )
+              |}""".stripMargin)
         )
       }
       "work when already having a companion object" in {
@@ -101,8 +97,7 @@ class DefinitionGeneratorSuite extends Specification {
         }
 
         (ClassWithCompanion.structureJson.noSpaces must beEqualTo(
-          JsonUglyfier.uglyfy(
-            """
+          JsonUglyfier.uglyfy("""
               |{
               | "ClassWithCompanion": {
               |   "type": "object",
@@ -127,8 +122,7 @@ class DefinitionGeneratorSuite extends Specification {
               |    }
               |  }
               |}
-            """.stripMargin
-          )
+            """.stripMargin)
         )) && (ClassWithCompanion.testValue must beEqualTo(expectation))
       }
     }

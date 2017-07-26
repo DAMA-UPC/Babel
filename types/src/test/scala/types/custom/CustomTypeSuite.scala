@@ -28,8 +28,7 @@ class CustomTypeSuite extends Specification with ScalaCheck {
     }
     "Must expand the class using the macro '@TypeDefinition'" in {
       Test.structureJson.noSpaces must beEqualTo(
-        JsonUglyfier.uglyfy(
-          """
+        JsonUglyfier.uglyfy("""
             |{
             |  "Test": {
             |    "type": "object",
@@ -54,8 +53,7 @@ class CustomTypeSuite extends Specification with ScalaCheck {
             |    }
             |  }
             |}
-          """.stripMargin
-        )
+          """.stripMargin)
       )
     }
     "The expanded class companion must implement the interface 'CustomType'" in {

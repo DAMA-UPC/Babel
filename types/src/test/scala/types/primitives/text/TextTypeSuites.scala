@@ -30,7 +30,7 @@ class TextTypeSuites extends Specification {
       val expectation1 = noOverlapValue.constraints must beEqualTo(Seq(constraint))
 
       // Value overlapping
-      val maxLength : Long = 6L
+      val maxLength: Long = 6L
       val newConstraint = TextTypeConstraints.maxLength(maxLength)
       val valueOverlapping = noOverlapValue.withMaxLength(maxLength)
       val expectation2 = valueOverlapping.constraints must beEqualTo(Seq(constraint, newConstraint))

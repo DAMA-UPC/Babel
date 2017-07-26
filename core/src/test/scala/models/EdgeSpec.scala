@@ -16,13 +16,12 @@ class EdgeSpec extends Specification with ScalaCheck {
   /**
     * [[Edge.toString]] method testSuite
     */
-  private[this] def testToString[T](classGenerator: (T, T) => Edge[T],
-                                    stringGenerator: (T, T) => String)
-                                   (implicit arbA: Arbitrary[T]
-                                   ): ScalaCheckFunction2[T, T, Boolean] = {
-    prop {
-      (source: T, target: T) =>
-        classGenerator(source, target).toString == stringGenerator(source, target).toString
+  private[this] def testToString[T](
+    classGenerator: (T, T) => Edge[T],
+    stringGenerator: (T, T) => String
+  )(implicit arbA: Arbitrary[T]): ScalaCheckFunction2[T, T, Boolean] = {
+    prop { (source: T, target: T) =>
+      classGenerator(source, target).toString == stringGenerator(source, target).toString
     }
   }
 

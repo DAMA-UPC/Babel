@@ -8,9 +8,8 @@ import types.primitives.Constraint
 /**
   * Represents a [[TextType]] constraint.
   */
-private[types]
-sealed case class TextTypeConstraint private(typeName: String,
-                                             value: String) extends Constraint(typeName, value)
+private[types] sealed case class TextTypeConstraint private (typeName: String, value: String)
+    extends Constraint(typeName, value)
 
 /**
   * List of all the valid [[TextTypeConstraint]].

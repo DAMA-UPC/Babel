@@ -9,9 +9,8 @@ import types.primitives.Constraint
 /**
   * Represents a [[DateType]] constraint.
   */
-private[types]
-sealed case class DateTypeConstraint private(typeName: String,
-                                             value: String) extends Constraint(typeName, value)
+private[types] sealed case class DateTypeConstraint private (typeName: String, value: String)
+    extends Constraint(typeName, value)
 
 /**
   * List of all the valid [[DateTypeConstraint]].

@@ -15,11 +15,7 @@ trait NumericTypes {
     * Represents a 8 bit signed integer on the Babel AST.
     */
   private[types] val astByte: NumericType =
-    NumericType(
-      minValue(Byte.MinValue),
-      maxValue(Byte.MaxValue),
-      maxNumberDecimals(0)
-    )
+    NumericType(minValue(Byte.MinValue), maxValue(Byte.MaxValue), maxNumberDecimals(0))
 
   /**
     * Implicit conversion from [[scala.Byte]] to [[astByte]].
@@ -30,11 +26,7 @@ trait NumericTypes {
     * Represents a 16 bit signed integer on the Babel AST.
     */
   private[types] val astShort: NumericType =
-    NumericType(
-      minValue(Short.MinValue),
-      maxValue(Short.MaxValue),
-      maxNumberDecimals(0)
-    )
+    NumericType(minValue(Short.MinValue), maxValue(Short.MaxValue), maxNumberDecimals(0))
 
   /**
     * Implicit conversion from [[scala.Short]] to [[astShort]].
@@ -45,11 +37,7 @@ trait NumericTypes {
     * Represents a 32 bit signed integer on the Babel AST.
     */
   private[types] val astInt: NumericType =
-    NumericType(
-      minValue(Int.MinValue),
-      maxValue(Int.MaxValue),
-      maxNumberDecimals(0)
-    )
+    NumericType(minValue(Int.MinValue), maxValue(Int.MaxValue), maxNumberDecimals(0))
 
   /**
     * Implicit conversion from [[scala.Int]] to [[astInt]].
@@ -60,11 +48,7 @@ trait NumericTypes {
     * Represents a 64 bit signed integer on the Babel AST.
     */
   private[types] val astLong: NumericType =
-    NumericType(
-      minValue(Long.MinValue),
-      maxValue(Long.MaxValue),
-      maxNumberDecimals(0)
-    )
+    NumericType(minValue(Long.MinValue), maxValue(Long.MaxValue), maxNumberDecimals(0))
 
   /**
     * Implicit conversion from [[scala.Int]] to [[astLong]].
@@ -75,9 +59,7 @@ trait NumericTypes {
     * Represents an integer with an arbitrary precision.
     */
   private[types] val astBigInt: NumericType =
-    NumericType(
-      maxNumberDecimals(0)
-    )
+    NumericType(maxNumberDecimals(0))
 
   /**
     * Implicit conversion from [[scala.BigInt]] to [[astBigInt]].
@@ -89,11 +71,9 @@ trait NumericTypes {
     */
   private[types] val astFloat: NumericType = {
     @inline val maxNumberDecimalsInScalaFloat = 8
-    NumericType(
-      minValue(Float.MinValue),
-      maxValue(Float.MaxValue),
-      maxNumberDecimals(maxNumberDecimalsInScalaFloat)
-    )
+    NumericType(minValue(Float.MinValue),
+                maxValue(Float.MaxValue),
+                maxNumberDecimals(maxNumberDecimalsInScalaFloat))
   }
 
   /**
@@ -106,11 +86,9 @@ trait NumericTypes {
     */
   private[types] val astDouble: NumericType = {
     @inline val maxNumberDecimalsInScalaDouble = 16
-    NumericType(
-      minValue(Double.MinValue),
-      maxValue(Double.MaxValue),
-      maxNumberDecimals(maxNumberDecimalsInScalaDouble)
-    )
+    NumericType(minValue(Double.MinValue),
+                maxValue(Double.MaxValue),
+                maxNumberDecimals(maxNumberDecimalsInScalaDouble))
   }
 
   /**

@@ -10,11 +10,7 @@ import types.primitives.timestamp.TimestampTypes
   */
 package object types extends types
 
-trait types
-  extends NumericTypes
-    with TimestampTypes
-    with TextTypes
-    with DateTypes {
+trait types extends NumericTypes with TimestampTypes with TextTypes with DateTypes {
 
   /**
     * Implicit [[Encoder]] for [[Type]].

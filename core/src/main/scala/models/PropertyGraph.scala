@@ -9,5 +9,4 @@ import cats.data.NonEmptyStream
   * @param edges    of the generated graph.
   * @tparam ID of the generated [[Vertex]] unique identifiers.
   */
-case class PropertyGraph[ID](vertices: NonEmptyStream[Vertex[ID]],
-                             edges: NonEmptyStream[Edge[ID]])
+case class PropertyGraph[ID](vertices: NonEmptyStream[Vertex[ID]], edges: NonEmptyStream[Edge[ID]])

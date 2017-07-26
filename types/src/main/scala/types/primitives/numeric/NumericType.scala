@@ -7,35 +7,29 @@ import types.primitives.PrimitiveType
   * Represents a Numeric type, which represents a primitive type number.
   */
 case class NumericType private (override val typeName: String,
-                                override val constraints: Seq[NumericTypeConstraint]
-                               ) extends PrimitiveType[NumericTypeConstraint] {
+                                override val constraints: Seq[NumericTypeConstraint])
+    extends PrimitiveType[NumericTypeConstraint] {
 
   /**
     * Copies the type adding/replacing the minimum value constraint
     * from the [[NumericType]].
     */
   def withMinValue(v: Number): NumericType =
-    withConstraint(
-      NumericTypesConstraints.minValue(v)
-    )
+    withConstraint(NumericTypesConstraints.minValue(v))
 
   /**
     * Copies the type adding/replacing the minimum value constraint
     * from the [[NumericType]].
     */
   def withMaxValue(v: Number): NumericType =
-    withConstraint(
-      NumericTypesConstraints.maxValue(v)
-    )
+    withConstraint(NumericTypesConstraints.maxValue(v))
 
   /**
     * Copies the type adding/replacing the minimum value constraint
     * from the [[NumericType]].
     */
   def withMaxNumberDecimals(v: Number): NumericType =
-    withConstraint(
-      NumericTypesConstraints.maxNumberDecimals(v)
-    )
+    withConstraint(NumericTypesConstraints.maxNumberDecimals(v))
 
   /**
     * Adds a new constraint to the [[NumericType]]. If the

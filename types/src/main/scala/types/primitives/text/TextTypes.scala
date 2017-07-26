@@ -16,10 +16,8 @@ trait TextTypes {
     * Represents a UTF-8 [[String]] in the AST.
     */
   private[types] val astStringTextType: TextType =
-    TextType(
-      TextTypeConstraints.minLength(0),
-      TextTypeConstraints.encoding(Charset.forName("UTF-8"))
-    )
+    TextType(TextTypeConstraints.minLength(0),
+             TextTypeConstraints.encoding(Charset.forName("UTF-8")))
 
   /**
     * Implicit conversion from [[String]] to [[astStringTextType]].
