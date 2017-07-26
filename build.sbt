@@ -70,14 +70,6 @@ testOptions += Tests.Argument(TestFrameworks.JUnit, "-q", "-v", "-s", "-a")
 wartremoverErrors in (Compile, compile) ++= Warts.allBut(Wart.FinalCaseClass)
 wartremoverErrors in (Test, test) ++= Warts.allBut(Wart.FinalCaseClass, Wart.NonUnitStatements)
 
-/************    ScalaStyle    **************/
-
-scalastyleFailOnError := true
-
-lazy val testScalastyle = taskKey[Unit]("testScalastyle")
-testScalastyle := org.scalastyle.sbt.ScalastylePlugin.scalastyle.in(Test).toTask("").value
-(test in Test) := ((test in Test) dependsOn testScalastyle).value
-
 /**************    Modules    ***************/
 
 lazy val types = project.settings(dependencies, macroDependencies)

@@ -14,8 +14,6 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.2.0")
 addSbtPlugin("org.wartremover" % "sbt-wartremover" % "2.1.1")
 // https://github.com/sbt/sbt-release
 addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.5")
-// http://www.scalastyle.org/sbt.html
-addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "0.8.0")
 // https://github.com/alexarchambault/coursier
 addSbtPlugin("io.get-coursier" % "sbt-coursier" % "1.0.0-RC6")
 
