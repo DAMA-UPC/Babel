@@ -1,7 +1,7 @@
 package types.custom.helpers
 
 import java.time._
-import java.util.Date
+import java.util.{Date, UUID}
 
 import org.specs2.mutable.Specification
 import types._
@@ -13,8 +13,8 @@ import scala.collection.immutable.SortedMap
   */
 class Class2TypeMapSuite extends Specification {
 
-  // TODO: Add Date type as soon as it is implemented
-  // TODO: Add Identifier type as soon as it is implemented
+  // TODO: Test the macro when using optinal values as soon as it is implemented.
+  // TODO: Test the macro when pointing to other type-mapped classes.
 
   "Macro annotation expansion" should {
 
@@ -99,6 +99,10 @@ class Class2TypeMapSuite extends Specification {
         LocalDateTest.typeMap must beEqualTo(Map[String, Type]("value" -> classOf[LocalDate]))
 
       testJavaDateType && testLocalDateType
+    }
+    "work with UUID classes" in {
+      @Class2TypeMap case class TestUuidClass(value: UUID)
+      TestUuidClass.typeMap must beEqualTo(Map[String, Type]("value" -> classOf[UUID]))
     }
     "work with case classes" in {
       @Class2TypeMap case class TestCaseClass(value: Int)

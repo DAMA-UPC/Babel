@@ -4,13 +4,14 @@ import types.primitives.date.DateTypes
 import types.primitives.numeric.NumericTypes
 import types.primitives.text.TextTypes
 import types.primitives.timestamp.TimestampTypes
+import types.primitives.uuid.UuidTypes
 
 /**
   * Package object containing the API for managing types in Babel.
   */
 package object types extends types
 
-trait types extends NumericTypes with TimestampTypes with TextTypes with DateTypes {
+trait types extends NumericTypes with TimestampTypes with TextTypes with DateTypes with UuidTypes {
 
   /**
     * Implicit [[Encoder]] for [[Type]].

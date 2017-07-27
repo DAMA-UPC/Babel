@@ -5,6 +5,7 @@ import types.primitives.date.DateTypes
 import types.primitives.numeric.NumericTypes
 import types.primitives.text.TextTypes
 import types.primitives.timestamp.TimestampTypes
+import types.primitives.uuid.UuidTypes
 
 import scala.annotation.compileTimeOnly
 import scala.collection.immutable.Seq
@@ -110,12 +111,13 @@ object Class2TypeMap {
         val isNumericType = NumericTypes.typeNameToBabelType(typeName).isDefined
         val isTimeType = TimestampTypes.typeNameToBabelType(typeName).isDefined
         val isTextType = TextTypes.typeNameToBabelType(typeName).isDefined
+        val isUuidType = UuidTypes.typeNameToBabelType(typeName).isDefined
         val isCharType = if (!isTextType) false else typeName.endsWith("Char")
         val isDateType = DateTypes.typeNameToBabelType(typeName).isDefined
 
         if (isNumericType || isCharType) {
           q"($paramName, ${Term.Name(typeName)})"
-        } else if (isTimeType || isTextType || isDateType) {
+        } else if (isTimeType || isTextType || isUuidType || isDateType) {
           q"($paramName, classOf[${Type.Name(typeName)}])"
         } else {
           abort(s"Type '$typeName' is unsupported")
