@@ -7,13 +7,13 @@ import java.util.Date
 import types.primitives.Constraint
 
 /**
-  * Represents a [[DateType]] constraint.
+  * Represents a [[DateType]] [[Constraint]].
   */
 private[types] sealed case class DateTypeConstraint private (typeName: String, value: String)
     extends Constraint(typeName, value)
 
 /**
-  * List of all the valid [[DateTypeConstraint]].
+  * List of all the valid [[DateTypeConstraint]]'s.
   */
 private[types] object DateTypeConstraints {
 
