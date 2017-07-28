@@ -118,7 +118,7 @@ class Class2TypeMapSuite extends Specification {
         SortedMap[String, Type]("stringValue" -> Byte, "floatValue" -> Float)
       ))
     }
-    "work when using the fully qualified primitive type (Such as 'java.time.LocalDate')" in {
+    "work when using the fully qualified primitive types (Such as 'java.time.LocalDate')" in {
 
       @Class2TypeMap class LocalDateTimeTest(value: java.time.LocalDateTime)
       val testLocalDateTimeType =
