@@ -1,7 +1,6 @@
-package utils
+package types.utils
 
 import org.specs2.mutable.Specification
-import types.utils.TypeNameUtils
 
 /**
   * Tests for [[TypeNameUtils#typeNameWithoutPackagePredecessors]] method.

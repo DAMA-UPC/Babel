@@ -1,18 +1,18 @@
-package types.custom.helpers
+package types
 
 import org.specs2.mutable.Specification
-import utils.JsonUglyfier
+import types.utils.JsonUglyfier
 
 /**
-  * Test the macro [[CustomTypeDefinitionJsonGenerator]].
+  * Test that the macro [[CustomType]] method
+  * 'structureJson: Json' works as expected.
   */
-class CustomTypeDefinitionJsonGeneratorSuite extends Specification {
+class CustomTypeStructureJsonSuite extends Specification {
 
-  "Macro annotation expansion" should {
+  "Macro annotation expansion of the method: 'structureJson : Json'" should {
 
-    "of the method: 'structureJson : Json'" should {
-      "work with single parameter classes" in {
-        @CustomTypeDefinitionJsonGenerator class SingleParameterClass(value: Int)
+    "work with single parameter classes" in {
+        @CustomType class SingleParameterClass(value: Int)
         SingleParameterClass.structureJson.noSpaces must beEqualTo(
           JsonUglyfier.uglyfy("""
               |{
@@ -43,8 +43,7 @@ class CustomTypeDefinitionJsonGeneratorSuite extends Specification {
         )
       }
       "work with multiple parameter classes" in {
-        @CustomTypeDefinitionJsonGenerator class MultipleParameterClass(stringValue: String,
-                                                                        floatValue: Float)
+        @CustomType class MultipleParameterClass(stringValue: String, floatValue: Float)
 
         MultipleParameterClass.structureJson.noSpaces must beEqualTo(
           JsonUglyfier.uglyfy("""
@@ -52,6 +51,19 @@ class CustomTypeDefinitionJsonGeneratorSuite extends Specification {
               | "MultipleParameterClass": {
               |   "type": "object",
               |   "properties": {
+              |     "stringValue": {
+              |       "typeName": "Text",
+              |       "constraints": [
+              |         {
+              |           "name": "MinLength",
+              |           "value": "0"
+              |         },
+              |         {
+              |           "name": "Encoding",
+              |           "value": "UTF-8"
+              |         }
+              |       ]
+              |     },
               |     "floatValue": {
               |       "typeName": "Number",
               |       "constraints": [
@@ -68,19 +80,6 @@ class CustomTypeDefinitionJsonGeneratorSuite extends Specification {
               |           "value": "8"
               |         }
               |       ]
-              |     },
-              |     "stringValue": {
-              |       "typeName": "Text",
-              |       "constraints": [
-              |         {
-              |           "name": "MinLength",
-              |           "value": "0"
-              |         },
-              |         {
-              |           "name": "Encoding",
-              |           "value": "UTF-8"
-              |         }
-              |       ]
               |     }
               |   }
               | }
@@ -90,7 +89,7 @@ class CustomTypeDefinitionJsonGeneratorSuite extends Specification {
       "work when already having a companion object" in {
         val expectation: Int = 42
 
-        @CustomTypeDefinitionJsonGenerator class ClassWithCompanion(value: Int)
+        @CustomType class ClassWithCompanion(value: Int)
 
         object ClassWithCompanion {
           def testValue: Int = expectation
@@ -125,13 +124,5 @@ class CustomTypeDefinitionJsonGeneratorSuite extends Specification {
             """.stripMargin)
         )) && (ClassWithCompanion.testValue must beEqualTo(expectation))
       }
-    }
-
-    "toString() override" should {
-      "Correspond to a pretty printed structure JSON with 2 spaces" in {
-        @CustomTypeDefinitionJsonGenerator class SingleParameterClass(value: Int)
-        SingleParameterClass.toString must beEqualTo(SingleParameterClass.structureJson.spaces2)
-      }
-    }
   }
 }
