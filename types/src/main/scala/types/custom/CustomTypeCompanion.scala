@@ -1,6 +1,6 @@
 package types.custom
 
-import types.TypeCompanion
+import types.Type
 
 import scala.collection.Map
 
@@ -9,7 +9,7 @@ import scala.collection.Map
   *
   * @tparam T representing the assigned [[CustomTypeImpl]].
   */
-private[types] trait CustomTypeCompanion[T <: CustomTypeImpl] extends TypeCompanion {
+private[types] trait CustomTypeCompanion[T <: CustomTypeImpl] extends Type {
 
   /**
     * Apply override used for de-serializing a map of variables
