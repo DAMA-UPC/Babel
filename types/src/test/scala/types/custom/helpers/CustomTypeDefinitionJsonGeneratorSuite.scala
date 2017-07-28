@@ -4,15 +4,15 @@ import org.specs2.mutable.Specification
 import utils.JsonUglyfier
 
 /**
-  * Test the macro [[Class2TypeMap]].
+  * Test the macro [[CustomTypeDefinitionJsonGenerator]].
   */
-class DefinitionGeneratorSuite extends Specification {
+class CustomTypeDefinitionJsonGeneratorSuite extends Specification {
 
   "Macro annotation expansion" should {
 
     "of the method: 'structureJson : Json'" should {
       "work with single parameter classes" in {
-        @StructureDefinitionGenerator class SingleParameterClass(value: Int)
+        @CustomTypeDefinitionJsonGenerator class SingleParameterClass(value: Int)
         SingleParameterClass.structureJson.noSpaces must beEqualTo(
           JsonUglyfier.uglyfy("""
               |{
@@ -43,8 +43,8 @@ class DefinitionGeneratorSuite extends Specification {
         )
       }
       "work with multiple parameter classes" in {
-        @StructureDefinitionGenerator class MultipleParameterClass(stringValue: String,
-                                                                   floatValue: Float)
+        @CustomTypeDefinitionJsonGenerator class MultipleParameterClass(stringValue: String,
+                                                                        floatValue: Float)
 
         MultipleParameterClass.structureJson.noSpaces must beEqualTo(
           JsonUglyfier.uglyfy("""
@@ -90,7 +90,7 @@ class DefinitionGeneratorSuite extends Specification {
       "work when already having a companion object" in {
         val expectation: Int = 42
 
-        @StructureDefinitionGenerator class ClassWithCompanion(value: Int)
+        @CustomTypeDefinitionJsonGenerator class ClassWithCompanion(value: Int)
 
         object ClassWithCompanion {
           def testValue: Int = expectation
@@ -124,6 +124,13 @@ class DefinitionGeneratorSuite extends Specification {
               |}
             """.stripMargin)
         )) && (ClassWithCompanion.testValue must beEqualTo(expectation))
+      }
+    }
+
+    "toString() override" should {
+      "Correspond to a pretty printed structure JSON with 2 spaces" in {
+        @CustomTypeDefinitionJsonGenerator class SingleParameterClass(value: Int)
+        SingleParameterClass.toString must beEqualTo(SingleParameterClass.structureJson.spaces2)
       }
     }
   }

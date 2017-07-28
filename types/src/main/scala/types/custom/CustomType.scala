@@ -64,7 +64,7 @@ import scala.meta._
 
 /**
   * Represents a Babel custom type class. This class aggregates the macro [[Class2Map]],
-  * [[Class2TypeMap]], [[FromMapApply]] and [[StructureDefinitionGenerator]] generated methods
+  * [[Class2TypeMap]], [[FromMapApply]] and [[CustomTypeDefinitionJsonGenerator]] generated methods
   * to the input class and its companion object. The class will implement the Trait [[CustomTypeImpl]]
   * and the companion object the trait [[CustomTypeCompanion]].
   */
@@ -93,7 +93,7 @@ private object MacroImpl {
       Class2Map.impl,
       Class2TypeMap.impl,
       FromMapApply.impl,
-      StructureDefinitionGenerator.impl
+      CustomTypeDefinitionJsonGenerator.impl
     )
   }
 

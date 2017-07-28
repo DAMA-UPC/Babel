@@ -6,7 +6,7 @@ import types.primitives.Constraint
   * Represents a [[UuidType]] [[Constraint]].
   */
 private[types] sealed case class UuidTypeConstraint private (typeName: String, value: String)
-  extends Constraint(typeName, value)
+    extends Constraint(typeName, value)
 
 /**
   * List of all the valid [[UuidTypeConstraint]]'s.

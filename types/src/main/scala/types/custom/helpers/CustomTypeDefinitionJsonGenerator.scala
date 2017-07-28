@@ -8,52 +8,53 @@ import scala.meta._
 /**
   * Before:
   * {{{
-  * @DefinitionGenerator
+  * @CustomTypeDefinitionJsonGenerator
   * case class Test(a: Int, b: String, c: Float)
   * }}}
   *
   * After:
   *
   * {{{
-  * case class Test(a: Int, b: String, c: Float)
+  * case class Test(a: Int, b: String, c: Float) {
+  *   def structureJson: _root_.io.circe.Json = Test.structureJson
+  * }
   *
   * object Test {
   *   def structureJson: _root_.io.circe.Json = {
-  *   val typeMap =
-  *     _root_.scala.collection.immutable.Map[String, String](
-  *       ("a", "Int"),
-  *       ("b", "String"),
-  *       ("c", "Float")
+  *     import types._
+  *     val typeMap =
+  *       scala.collection.immutable.SortedMap[String, types.Type](
+  *            ("a", Int), ("b", classOf[String]), ("c", Float)
   *       )
-  *   import _root_.io.circe._
-  *   import _root_.io.circe.syntax._
-  *   val objectTypesJson = JsonObject.fromMap(typeMap.mapValues(_.asJson)).asJson
-  *   val objectPropertiesJson = {
-  *     JsonObject
-  *       .fromMap(
+  *     import _root_.io.circe._
+  *     import _root_.io.circe.syntax._
+  *     val objectTypesJson = JsonObject.fromMap(typeMap.mapValues(_.asJson)).asJson
+  *     val objectPropertiesJson = JsonObject.fromMap(
   *         _root_.scala.collection.immutable.Map(
-  *           "type" -> "object".asJson,
-  *           "properties" -> objectTypesJson
-  *           )
+  *            "type" -> "object".asJson, "properties" -> objectTypesJson
+  *         )
   *       ).asJson
-  *   }
-  *   JsonObject.fromMap(_root_.scala.collection.immutable.Map("Test" -> objectPropertiesJson)).asJson
-  *   }
+  *     JsonObject.fromMap(
+  *       _root_.scala.collection.immutable.Map("Test" -> objectPropertiesJson)
+  *     ).asJson
+  *  }
+  *
+  *   override def toString: String = structureJson.spaces2
   * }
   * }}}
   */
-@compileTimeOnly("@DefinitionGenerator not expanded")
-class StructureDefinitionGenerator extends scala.annotation.StaticAnnotation {
-  inline def apply(defn: Any): Any = meta(StructureDefinitionGenerator.impl(defn))
+@compileTimeOnly("@CustomTypeDefinitionJsonGenerator not expanded")
+class CustomTypeDefinitionJsonGenerator extends scala.annotation.StaticAnnotation {
+  inline def apply(defn: Any): Any = meta(CustomTypeDefinitionJsonGenerator.impl(defn))
 }
 
 /**
-  * Object containing the [[StructureDefinitionGenerator]] macro annotation expansion implementation.
+  * Object containing the [[CustomTypeDefinitionJsonGenerator]] macro annotation expansion implementation.
   */
-object StructureDefinitionGenerator {
+object CustomTypeDefinitionJsonGenerator {
 
   /**
-    * Implementation of the [[StructureDefinitionGenerator]] macro expansion.
+    * Implementation of the [[CustomTypeDefinitionJsonGenerator]] macro expansion.
     */
   val impl: (Stat) => Block = {
     (defn: Stat) => {
@@ -64,12 +65,14 @@ object StructureDefinitionGenerator {
           val methodToAdd = definitionJsonCompanionObjectMethod(name, ctor)
 
           // Adds the method to the class.
-          val newClsMethod = definionJsonClassMethod(name)
+          val newClsMethod = definitionJsonClassMethod(name)
           val clsMethods: Seq[Stat] = template.stats.getOrElse(Nil) :+ newClsMethod
           val newClass = cls.copy(templ = template.copy(stats = Some(clsMethods)))
 
           // Adds the method to the companion object
-          val companionMethods: Seq[Stat] = companion.templ.stats.getOrElse(Nil) :+ methodToAdd
+          val companionMethods: Seq[Stat] =
+            companion.templ.stats.getOrElse(Nil) :+ methodToAdd :+ toStringMethodOverride
+
           val newCompanion = companion.copy(
             templ = companion.templ.copy(stats = Some(companionMethods))
           )
@@ -81,13 +84,18 @@ object StructureDefinitionGenerator {
           val methodToAdd = definitionJsonCompanionObjectMethod(name, ctor)
 
           // Adds the method to the class.
-          val newClsMethod = definionJsonClassMethod(name)
+          val newClsMethod = definitionJsonClassMethod(name)
           val clsMethods: Seq[Stat] = template.stats.getOrElse(Nil) :+ newClsMethod
           val newClass = cls.copy(templ = template.copy(stats = Some(clsMethods)))
 
           // companion object does not exists
           val companion =
-            q"object ${Term.Name(name.value)} { $methodToAdd }"
+            q"""
+               object ${Term.Name(name.value)} {
+                  $methodToAdd
+                  $toStringMethodOverride
+               }
+             """
           Term.Block(Seq(newClass, companion))
         case _ =>
           println(defn.structure)
@@ -96,13 +104,8 @@ object StructureDefinitionGenerator {
     }
   }
 
-  private[this] def definionJsonClassMethod(name: Name): Defn.Def = {
-    val className = Term.Name(name.value)
-    q"def structureJson : _root_.io.circe.Json = $className.structureJson"
-  }
-
   /**
-    * Generates the JSON definition method.
+    * Method for serializing the [[Type]] structure as a JSON.
     */
   private[this] def definitionJsonCompanionObjectMethod(name: Name,
                                                         ctor: Ctor.Primary): Defn.Def = {
@@ -111,6 +114,8 @@ object StructureDefinitionGenerator {
 
     q"""
         def structureJson : _root_.io.circe.Json = {
+
+          import types._
 
           val typeMap = ${Class2TypeMap.methodBody(ctor)}
 
@@ -139,4 +144,19 @@ object StructureDefinitionGenerator {
         }
       """
   }
+
+  /**
+    * Convenience method in the main class for calling directly from the class:
+    * [[CustomTypeDefinitionJsonGenerator#definitionJsonCompanionObjectMethod]]
+    */
+  private[this] def definitionJsonClassMethod(name: Name): Defn.Def = {
+    val className = Term.Name(name.value)
+    q"def structureJson : _root_.io.circe.Json = $className.structureJson"
+  }
+
+  /**
+    * Contains the toString method override.
+    */
+  private[this] val toStringMethodOverride: Defn.Def =
+    q"override def toString: String = structureJson.spaces2"
 }

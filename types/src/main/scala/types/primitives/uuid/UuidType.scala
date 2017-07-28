@@ -9,7 +9,7 @@ import java.util.UUID
   */
 case class UuidType private[types] (override val typeName: String,
                                     override val constraints: Seq[UuidTypeConstraint])
-  extends PrimitiveType[UuidTypeConstraint] {
+    extends PrimitiveType[UuidTypeConstraint] {
 
   /**
     * Copies the type adding/replacing the minimum date constraint
