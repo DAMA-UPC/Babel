@@ -4,12 +4,12 @@ version := "0.0.1-SNAPSHOT"
 
 organization := "edu.upc.dama"
 
-scalaVersion := "2.12.2"
+scalaVersion := "2.12.3"
 
 /*************   DEPENDENCIES   *************/
 
 lazy val dependencies: Seq[Def.Setting[_]] = Seq(
-  scalaVersion := "2.12.2",
+  scalaVersion := "2.12.3",
   libraryDependencies ++= {
     val shapelessVersion = "2.3.2"
     val sourceCodeVersion = "0.1.4"
@@ -38,7 +38,7 @@ lazy val dependencies: Seq[Def.Setting[_]] = Seq(
       "org.scalacheck" %% "scalacheck" % scalaCheckVersion % "test"
     )
   },
-  addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0-M9" cross CrossVersion.full)
+  addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0-M10" cross CrossVersion.full)
 )
 
 lazy val macroDependencies: Seq[Def.Setting[_]] = Seq(
