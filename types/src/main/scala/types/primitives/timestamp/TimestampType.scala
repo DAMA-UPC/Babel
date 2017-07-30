@@ -8,9 +8,14 @@ import types.primitives.PrimitiveType
   * Represents a Timestamp type, which represents the way of
   * representing an specific time moment.
   */
-case class TimestampType private (override val typeName: String,
+case class TimestampType private (override val isRequired: Boolean,
                                   override val constraints: Seq[TimestampTypeConstraint])
     extends PrimitiveType[TimestampTypeConstraint] {
+
+  /**
+    * @inheritdoc
+    */
+  override val typeName: String = TimestampType.typeName
 
   /**
     * Sets the minimum possible timestamp to the current timestamp.
@@ -102,7 +107,7 @@ case class TimestampType private (override val typeName: String,
     */
   private[this] def withConstraint(constraint: TimestampTypeConstraint): TimestampType = {
     val otherConstraints = this.constraints.filterNot(_.name == constraint.name)
-    TimestampType(otherConstraints :+ constraint: _*)
+    copy(constraints = otherConstraints :+ constraint)
   }
 }
 
@@ -118,9 +123,9 @@ object TimestampType {
 
   /**
     * Apply method needed for generating a [[TimestampType]]
-    * from the given constraints.
+    * from the given constraints supposing it is required in the AST.
     */
   def apply(constraints: TimestampTypeConstraint*): TimestampType =
-    TimestampType(typeName, if (constraints.isEmpty) Nil else constraints.toList)
+    TimestampType(isRequired = true, constraints = constraints)
 
 }

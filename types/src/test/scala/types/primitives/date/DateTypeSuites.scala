@@ -20,6 +20,14 @@ class DateTypeSuites extends Specification {
       val value: DateType = classOf[LocalDate]
       value must beEqualTo(DateTypes.astDateType)
     }
+    "Perform automatically with 'Option[Date]'" in {
+      val value: DateType = Option(classOf[Date])
+      value must beEqualTo(DateTypes.optionalAstDateType)
+    }
+    "Perform automatically with 'Option[LocalDate]'" in {
+      val value: DateType = Option(classOf[LocalDate])
+      value must beEqualTo(DateTypes.optionalAstDateType)
+    }
   }
 
   "ConstraintOverloads" should {

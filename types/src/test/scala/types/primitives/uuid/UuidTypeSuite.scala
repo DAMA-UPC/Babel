@@ -11,9 +11,13 @@ import org.specs2.mutable.Specification
 class UuidTypeSuite extends Specification {
 
   "Scala primitive types implicit conversion to Babel types" should {
-    "Perform automatically when inputing 'Uuid'" in {
+    "Perform automatically with 'UUID'" in {
       val value: UuidType = classOf[UUID]
       value must beEqualTo(astUuidType)
+    }
+    "Perform automatically with 'Option[UUID]'" in {
+      val value: UuidType = Option(classOf[UUID])
+      value must beEqualTo(optionalAstUuidType)
     }
   }
 

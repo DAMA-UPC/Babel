@@ -15,7 +15,7 @@ trait TextTypes {
   /**
     * Represents a UTF-8 [[String]] in the AST.
     */
-  private[types] val astStringTextType: TextType =
+  private[text] val astStringTextType: TextType =
     TextType(TextTypeConstraints.minLength(0),
              TextTypeConstraints.encoding(Charset.forName("UTF-8")))
 
@@ -25,15 +25,38 @@ trait TextTypes {
   implicit def stringToBabelType(typ: Class[String]): TextType = astStringTextType
 
   /**
+    * Represents an optional UTF-8 [[String]] in the AST.
+    */
+  private[text] val optionalAstStringTextType: TextType =
+    new TextType(isRequired = false, astStringTextType.constraints)
+
+  /**
+    * Implicit conversion from [[Option[String]]] to [[optionalAstStringTextType]].
+    */
+  implicit def optionalStringToBabelType(typ: Option[Class[String]]): TextType =
+    optionalAstStringTextType
+
+  /**
     * Represents a UTF-8 [[Char]] in the AST.
     */
-  private[types] val astCharacterTextType: TextType =
+  private[text] val astCharacterTextType: TextType =
     astStringTextType.withMaxLength(1).withMinLength(1)
 
   /**
     * Implicit conversion from [[Char]] to [[astCharacterTextType]].
     */
   implicit def charToBabelType(typ: Char.type): TextType = astCharacterTextType
+
+  /**
+    * Represents an optional UTF-8 [[Char]] in the AST.
+    */
+  private[text] val optionalAstCharTextType: TextType =
+    new TextType(isRequired = false, astCharacterTextType.constraints)
+
+  /**
+    * Implicit conversion from [[Option[Char]]] to [[optionalAstCharTextType]].
+    */
+  implicit def optionalCharToBabelType(typ: Option[Char.type]): TextType = optionalAstCharTextType
 
 }
 
@@ -43,9 +66,13 @@ trait TextTypes {
 object TextTypes extends TextTypes {
 
   private[types] def typeNameToBabelType(typeName: String): Option[TextType] = {
-    TypeNameUtils.typeNameWithoutPackagePredecessors(typeName) match {
-      case "Char" => Some(astCharacterTextType)
-      case "String" => Some(astStringTextType)
+
+    val parsedTypeName = TypeNameUtils.parseTypeName(typeName)
+    val isRequired = parsedTypeName.isRequired
+
+    parsedTypeName.typeName match {
+      case "Char" => Some(if (isRequired) astCharacterTextType else optionalAstStringTextType)
+      case "String" => Some(if (isRequired) astStringTextType else optionalAstCharTextType)
       case _ => None
     }
   }

@@ -7,9 +7,14 @@ import types.primitives.PrimitiveType
 /**
   * Represents a Babel primitive type representing a text [[String]] in the AST.
   */
-case class TextType private[types] (override val typeName: String,
+case class TextType private[types] (override val isRequired: Boolean,
                                     override val constraints: Seq[TextTypeConstraint])
     extends PrimitiveType[TextTypeConstraint] {
+
+  /**
+    * @inheritdoc
+    */
+  override val typeName: String = TextType.typeName
 
   /**
     * Copies the type adding/replacing the minimum length constraint
@@ -38,7 +43,7 @@ case class TextType private[types] (override val typeName: String,
     */
   private[this] def withConstraint(constraint: TextTypeConstraint): TextType = {
     @inline val otherConstraints = this.constraints.filterNot(_.name == constraint.name)
-    TextType(otherConstraints :+ constraint: _*)
+    copy(constraints = otherConstraints :+ constraint)
   }
 }
 
@@ -54,5 +59,5 @@ object TextType {
     * from the given constraints.
     */
   private[types] def apply(constraints: TextTypeConstraint*): TextType =
-    TextType(typeName, constraints.toSeq)
+    TextType(isRequired = true, constraints)
 }

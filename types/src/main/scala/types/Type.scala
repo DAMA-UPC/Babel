@@ -8,9 +8,14 @@ import io.circe.Json
 trait Type {
 
   /**
-    * This method returns the type name.
+    * Returns the type name as written in the generated meta-language.
     */
   def typeName: String
+
+  /**
+    * Returns if the type is required or if it is optional.
+    */
+  def isRequired: Boolean
 
   /**
     * This method generates a JSON containing the

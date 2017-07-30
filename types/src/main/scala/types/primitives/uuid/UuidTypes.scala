@@ -14,15 +14,26 @@ import scala.language.implicitConversions
 trait UuidTypes {
 
   /**
-    * Represents the default date on the AST.
+    * Represents an standard UUID on the AST.
     */
-  private[types] val astUuidType: UuidType =
+  private[uuid] val astUuidType: UuidType =
     UuidType(UuidTypeConstraints.isTimeUuid(false))
 
   /**
     * Implicit conversion from [[UUID]] to [[astUuidType]].
     */
-  implicit def dateToBabelType(typ: Class[UUID]): UuidType = astUuidType
+  implicit def uuidToBabelType(typ: Class[UUID]): UuidType = astUuidType
+
+  /**
+    * Represents an standard UUID on the AST that is not explicitly required.
+    */
+  private[uuid] val optionalAstUuidType: UuidType =
+    UuidType(UuidTypeConstraints.isTimeUuid(false))
+
+  /**
+    * Implicit conversion from an optional [[UUID]] to [[optionalAstUuidType]].
+    */
+  implicit def optionalUuidToBabelType(typ: Option[Class[UUID]]): UuidType = optionalAstUuidType
 
 }
 
@@ -32,8 +43,12 @@ trait UuidTypes {
 object UuidTypes extends UuidTypes {
 
   private[types] def typeNameToBabelType(typeName: String): Option[UuidType] = {
-    TypeNameUtils.typeNameWithoutPackagePredecessors(typeName) match {
-      case "UUID" => Some(astUuidType)
+
+    val parsedTypeName = TypeNameUtils.parseTypeName(typeName)
+    val isRequired = parsedTypeName.isRequired
+
+    parsedTypeName.typeName match {
+      case "UUID" => Some(if (isRequired) astUuidType else optionalAstUuidType)
       case _ => None
     }
   }

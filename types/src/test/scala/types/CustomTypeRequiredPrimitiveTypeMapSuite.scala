@@ -10,11 +10,11 @@ import scala.collection.immutable.SortedMap
 /**
   * Test that the macro [[CustomType]] generates handles the
   * generation of the `typeMap: SortedMap[String, Type]` method
-  * as expected.
+  * as expected when working that have a 'Non-Null' constraint
+  * on them in the AST.
   */
-class CustomTypeTypeMapSuite extends Specification {
+class CustomTypeRequiredPrimitiveTypeMapSuite extends Specification {
 
-  // TODO: Test the macro when using optional values as soon as it is implemented.
   // TODO: Test the macro when pointing to other CustomType classes.
 
   "Macro annotation expansion" should {

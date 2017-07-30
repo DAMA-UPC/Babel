@@ -11,21 +11,37 @@ import org.specs2.mutable.Specification
 class TimestampTypeSuites extends Specification {
 
   "Scala primitive types implicit conversion to Babel types" should {
+    "Perform automatically with 'LocalDateTime'" in {
+      val value: TimestampType = classOf[LocalDateTime]
+      value must beEqualTo(astLocalDateTime)
+    }
+    "Perform automatically with 'Option[LocalDateTime]'" in {
+      val value: TimestampType = Option(classOf[LocalDateTime])
+      value must beEqualTo(optionalAstLocalDateTime)
+    }
     "Perform automatically with 'Instant'" in {
       val value: TimestampType = classOf[Instant]
       value must beEqualTo(astOffsetDateTime)
     }
-    "Perform automatically with 'LocalDateTime'" in {
-      val value: TimestampType = classOf[LocalDateTime]
-      value must beEqualTo(astLocalDateTime)
+    "Perform automatically with 'Option[Instant]'" in {
+      val value: TimestampType = Option(classOf[Instant])
+      value must beEqualTo(optionalAstOffsetDateTime)
     }
     "Perform automatically with 'OffsetDateTime'" in {
       val value: TimestampType = classOf[OffsetDateTime]
       value must beEqualTo(astOffsetDateTime)
     }
+    "Perform automatically with 'Option[OffsetDateTime]'" in {
+      val value: TimestampType = Option(classOf[OffsetDateTime])
+      value must beEqualTo(optionalAstOffsetDateTime)
+    }
     "Perform automatically with 'ZonedDateTime'" in {
       val value: TimestampType = classOf[ZonedDateTime]
       value must beEqualTo(astZonedDateTime)
+    }
+    "Perform automatically with 'Option[ZonedDateTime]'" in {
+      val value: TimestampType = Option(classOf[ZonedDateTime])
+      value must beEqualTo(optionalAstZonedDateTime)
     }
   }
 

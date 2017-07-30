@@ -12,15 +12,16 @@ class CustomTypeStructureJsonSuite extends Specification {
   "Macro annotation expansion of the method: 'structureJson : Json'" should {
 
     "work with single parameter classes" in {
-        @CustomType class SingleParameterClass(value: Int)
-        SingleParameterClass.structureJson.noSpaces must beEqualTo(
-          JsonUglyfier.uglyfy("""
+      @CustomType class SingleParameterClass(value: Int)
+      SingleParameterClass.structureJson.noSpaces must beEqualTo(
+        JsonUglyfier.uglyfy("""
               |{
               |  "SingleParameterClass": {
               |    "type": "object",
               |    "properties": {
               |      "value": {
               |        "typeName": "Number",
+              |        "isRequired": true,
               |        "constraints": [
               |          {
               |            "name": "MinValue",
@@ -40,19 +41,20 @@ class CustomTypeStructureJsonSuite extends Specification {
               |  }
               |}
             """.stripMargin)
-        )
-      }
-      "work with multiple parameter classes" in {
-        @CustomType class MultipleParameterClass(stringValue: String, floatValue: Float)
+      )
+    }
+    "work with multiple parameter classes" in {
+      @CustomType class MultipleParameterClass(stringValue: String, floatValue: Float)
 
-        MultipleParameterClass.structureJson.noSpaces must beEqualTo(
-          JsonUglyfier.uglyfy("""
+      MultipleParameterClass.structureJson.noSpaces must beEqualTo(
+        JsonUglyfier.uglyfy("""
               |{
               | "MultipleParameterClass": {
               |   "type": "object",
               |   "properties": {
               |     "stringValue": {
               |       "typeName": "Text",
+              |       "isRequired": true,
               |       "constraints": [
               |         {
               |           "name": "MinLength",
@@ -66,6 +68,7 @@ class CustomTypeStructureJsonSuite extends Specification {
               |     },
               |     "floatValue": {
               |       "typeName": "Number",
+              |       "isRequired": true,
               |       "constraints": [
               |         {
               |           "name": "MinValue",
@@ -84,25 +87,26 @@ class CustomTypeStructureJsonSuite extends Specification {
               |   }
               | }
               |}""".stripMargin)
-        )
+      )
+    }
+    "work when already having a companion object" in {
+      val expectation: Int = 42
+
+      @CustomType class ClassWithCompanion(value: Int)
+
+      object ClassWithCompanion {
+        def testValue: Int = expectation
       }
-      "work when already having a companion object" in {
-        val expectation: Int = 42
 
-        @CustomType class ClassWithCompanion(value: Int)
-
-        object ClassWithCompanion {
-          def testValue: Int = expectation
-        }
-
-        (ClassWithCompanion.structureJson.noSpaces must beEqualTo(
-          JsonUglyfier.uglyfy("""
+      (ClassWithCompanion.structureJson.noSpaces must beEqualTo(
+        JsonUglyfier.uglyfy("""
               |{
               | "ClassWithCompanion": {
               |   "type": "object",
               |   "properties": {
               |     "value": {
               |       "typeName": "Number",
+              |       "isRequired": true,
               |       "constraints": [
               |         {
               |           "name": "MinValue",
@@ -122,7 +126,7 @@ class CustomTypeStructureJsonSuite extends Specification {
               |  }
               |}
             """.stripMargin)
-        )) && (ClassWithCompanion.testValue must beEqualTo(expectation))
-      }
+      )) && (ClassWithCompanion.testValue must beEqualTo(expectation))
+    }
   }
 }

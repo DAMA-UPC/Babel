@@ -11,35 +11,67 @@ class NumericTypeSuites extends Specification {
   "Scala primitive types implicit conversion to Babel types" should {
     "Perform automatically with 'scala.Byte'" in {
       val value: NumericType = Byte
-      value must beEqualTo(astByte)
+      value must beEqualTo(astByteType)
+    }
+    "Perform automatically with 'scala.Option[scala.Byte]'" in {
+      val value: NumericType = Option(Byte)
+      value must beEqualTo(optionalAstByteType)
     }
     "Perform automatically with 'scala.Short'" in {
       val value: NumericType = Short
-      value must beEqualTo(astShort)
+      value must beEqualTo(astShortType)
+    }
+    "Perform automatically with 'scala.Option[scala.Short]'" in {
+      val value: NumericType = Option(Short)
+      value must beEqualTo(optionalAstShortType)
     }
     "Perform automatically with 'scala.Int'" in {
       val value: NumericType = Int
-      value must beEqualTo(astInt)
+      value must beEqualTo(astIntType)
+    }
+    "Perform automatically with 'scala.Option[scala.Int]'" in {
+      val value: NumericType = Option(Int)
+      value must beEqualTo(optionalAstIntType)
     }
     "Perform automatically with 'scala.Long'" in {
       val value: NumericType = Long
-      value must beEqualTo(astLong)
+      value must beEqualTo(astLongType)
+    }
+    "Perform automatically with 'scala.Option[scala.Long]'" in {
+      val value: NumericType = Option(Long)
+      value must beEqualTo(optionalAstLongType)
     }
     "Perform automatically with 'scala.BigInt'" in {
       val value: NumericType = BigInt
-      value must beEqualTo(astBigInt)
+      value must beEqualTo(astBigIntType)
+    }
+    "Perform automatically with 'scala.Option[scala.BigInt]'" in {
+      val value: NumericType = Option(BigInt)
+      value must beEqualTo(optionalAstBigIntType)
     }
     "Perform automatically with 'scala.Float'" in {
       val value: NumericType = Float
-      value must beEqualTo(astFloat)
+      value must beEqualTo(astFloatType)
+    }
+    "Perform automatically with 'scala.Option[scala.Float]'" in {
+      val value: NumericType = Option(Float)
+      value must beEqualTo(optionalAstFloatType)
     }
     "Perform automatically with 'scala.Double'" in {
       val value: NumericType = Double
-      value must beEqualTo(astDouble)
+      value must beEqualTo(astDoubleType)
+    }
+    "Perform automatically with 'scala.Option[scala.Double]'" in {
+      val value: NumericType = Option(Double)
+      value must beEqualTo(optionalAstDoubleType)
     }
     "Perform automatically with 'scala.BigDecimal'" in {
       val value: NumericType = BigDecimal
-      value must beEqualTo(astBigDecimal)
+      value must beEqualTo(astBigDecimalType)
+    }
+    "Perform automatically with 'scala.Option[scala.BigDecimal]'" in {
+      val value: NumericType = Option(BigDecimal)
+      value must beEqualTo(optionalAstBigDecimalType)
     }
   }
   "ConstraintOverloads" should {

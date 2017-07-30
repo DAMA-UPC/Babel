@@ -17,7 +17,7 @@ trait TimestampTypes {
     *
     * Will be serialized in the AST as: '2017-03-20T10:24:22.730'
     */
-  private[types] val astLocalDateTime: TimestampType =
+  private[timestamp] val astLocalDateTime: TimestampType =
     TimestampType(TimestampTypesConstraints.formatLocalTimestamp)
 
   /**
@@ -27,12 +27,26 @@ trait TimestampTypes {
     astLocalDateTime
 
   /**
+    * Represents an optional local timestamp, without timezone in the AST.
+    *
+    * Will be serialized in the AST as: '2017-03-20T10:24:22.730'
+    */
+  private[timestamp] val optionalAstLocalDateTime: TimestampType =
+    TimestampType(isRequired = false, constraints = astLocalDateTime.constraints)
+
+  /**
+    * Implicit conversion from an optional [[LocalDateTime]] to [[optionalAstLocalDateTime]].
+    */
+  implicit def optionalLocalDateTimeToAstType(typ: Option[Class[LocalDateTime]]): TimestampType =
+    optionalAstLocalDateTime
+
+  /**
     * Represents a timestamp with an offset in the AST.
     *
     * Will be serialized in the AST as: '2017-03-20T10:24:22.730Z'
     * or '2017-03-20T10:24:22.730+10:00'
     */
-  private[types] val astOffsetDateTime: TimestampType =
+  private[timestamp] val astOffsetDateTime: TimestampType =
     TimestampType(TimestampTypesConstraints.formatTimestampWithOffset)
 
   /**
@@ -48,11 +62,32 @@ trait TimestampTypes {
     astOffsetDateTime
 
   /**
+    * Represents an optional timestamp with an offset in the AST.
+    *
+    * Will be serialized in the AST as: '2017-03-20T10:24:22.730Z'
+    * or '2017-03-20T10:24:22.730+10:00'
+    */
+  private[timestamp] val optionalAstOffsetDateTime: TimestampType =
+    TimestampType(isRequired = false, constraints = astOffsetDateTime.constraints)
+
+  /**
+    * Implicit conversion from an optional [[OffsetDateTime]] to [[optionalAstOffsetDateTime]].
+    */
+  implicit def optionalInstantDateTimeToAstType(typ: Option[Class[Instant]]): TimestampType =
+    optionalAstOffsetDateTime
+
+  /**
+    * Implicit conversion from an optional [[java.time.OffsetDateTime]] class to [[optionalAstOffsetDateTime]].
+    */
+  implicit def optionalOffsetDateTimeToAstType(typ: Option[Class[OffsetDateTime]]): TimestampType =
+    optionalAstOffsetDateTime
+
+  /**
     * Represents a timestamp with its timezone in the AST.
     *
     * Will be serialized in the AST as: '2017-03-20T11:34:56.581+01:00[Europe/Andorra]'
     */
-  private[types] val astZonedDateTime: TimestampType =
+  private[timestamp] val astZonedDateTime: TimestampType =
     TimestampType(TimestampTypesConstraints.formatTimestampWithTimeZone)
 
   /**
@@ -61,6 +96,19 @@ trait TimestampTypes {
   implicit def zonedDateTimeToAstType(typ: Class[ZonedDateTime]): TimestampType =
     astZonedDateTime
 
+  /**
+    * Represents an optional timestamp with its timezone in the AST.
+    *
+    * Will be serialized in the AST as: '2017-03-20T11:34:56.581+01:00[Europe/Andorra]'
+    */
+  private[timestamp] val optionalAstZonedDateTime: TimestampType =
+    TimestampType(isRequired = false, constraints = astZonedDateTime.constraints)
+
+  /**
+    * Implicit conversion from [[ZonedDateTime]] to [[optionalAstZonedDateTime]].
+    */
+  implicit def optionalZonedDateTimeToAstType(typ: Option[Class[ZonedDateTime]]): TimestampType =
+    optionalAstZonedDateTime
 }
 
 /**
@@ -69,11 +117,15 @@ trait TimestampTypes {
 object TimestampTypes extends TimestampTypes {
 
   private[types] def typeNameToBabelType(typeName: String): Option[TimestampType] = {
-    TypeNameUtils.typeNameWithoutPackagePredecessors(typeName) match {
-      case "LocalDateTime" => Some(classOf[LocalDateTime])
-      case "OffsetDateTime" => Some(classOf[OffsetDateTime])
-      case "Instant" => Some(classOf[Instant])
-      case "ZonedDateTime" => Some(classOf[ZonedDateTime])
+
+    val parsedTypeName = TypeNameUtils.parseTypeName(typeName)
+    val isRequired = parsedTypeName.isRequired
+
+    parsedTypeName.typeName match {
+      case "LocalDateTime" => Some(if (isRequired) astLocalDateTime else optionalAstLocalDateTime)
+      case "OffsetDateTime" | "Instant" =>
+        Some(if (isRequired) astOffsetDateTime else optionalAstOffsetDateTime)
+      case "ZonedDateTime" => Some(if (isRequired) astZonedDateTime else optionalAstZonedDateTime)
       case _ => None
     }
   }

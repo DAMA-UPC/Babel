@@ -10,9 +10,14 @@ import types.primitives.text.TextType
 /**
   * Represents a Babel primitive type representing a text [[String]] in the AST.
   */
-case class DateType private[types] (override val typeName: String,
+case class DateType private[types] (override val isRequired: Boolean,
                                     override val constraints: Seq[DateTypeConstraint])
     extends PrimitiveType[DateTypeConstraint] {
+
+  /**
+    * @inheritdoc
+    */
+  override val typeName: String = DateType.typeName
 
   /**
     * Copies the type adding/replacing the minimum date constraint
@@ -62,7 +67,7 @@ case class DateType private[types] (override val typeName: String,
     */
   private[this] def withConstraint(constraint: DateTypeConstraint): DateType = {
     @inline val otherConstraints = this.constraints.filterNot(_.name == constraint.name)
-    DateType(otherConstraints :+ constraint: _*)
+    copy(constraints = otherConstraints :+ constraint)
   }
 }
 
@@ -77,9 +82,9 @@ object DateType {
   val typeName: String = "Date"
 
   /**
-    * Apply method needed for generating a [[TextType]]
-    * from the given constraints.
+    * Apply method needed for generating a [[TextType]] from the
+    * given constraints, supposing that the the [[DateType]] is required.
     */
   private[types] def apply(constraints: DateTypeConstraint*): DateType =
-    DateType(typeName, constraints.toSeq)
+    DateType(isRequired = true, constraints = constraints.toSeq)
 }

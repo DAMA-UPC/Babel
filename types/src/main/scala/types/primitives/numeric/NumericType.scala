@@ -6,9 +6,14 @@ import types.primitives.PrimitiveType
 /**
   * Represents a Numeric type, which represents a primitive type number.
   */
-case class NumericType private (override val typeName: String,
-                                override val constraints: Seq[NumericTypeConstraint])
+case class NumericType private[types] (override val isRequired: Boolean,
+                                       override val constraints: Seq[NumericTypeConstraint])
     extends PrimitiveType[NumericTypeConstraint] {
+
+  /**
+    * @inheritdoc
+    */
+  override val typeName: String = NumericType.typeName
 
   /**
     * Copies the type adding/replacing the minimum value constraint
@@ -37,7 +42,7 @@ case class NumericType private (override val typeName: String,
     */
   private[this] def withConstraint(constraint: NumericTypeConstraint): NumericType = {
     @inline val otherConstraints = this.constraints.filterNot(_.name == constraint.name)
-    NumericType(otherConstraints :+ constraint: _*)
+    copy(constraints = otherConstraints :+ constraint)
   }
 }
 
@@ -52,10 +57,10 @@ object NumericType {
   val typeName: String = "Number"
 
   /**
-    * Apply method needed for generating a [[NumericType]]
+    * Apply method needed for generating a required [[NumericType]]
     * from the given constraints.
     */
   def apply(constraints: NumericTypeConstraint*): NumericType =
-    NumericType(typeName, constraints)
+    NumericType(isRequired = true, constraints)
 
 }

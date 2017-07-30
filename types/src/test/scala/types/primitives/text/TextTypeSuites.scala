@@ -13,9 +13,17 @@ class TextTypeSuites extends Specification {
       val value: TextType = classOf[String]
       value must beEqualTo(TextTypes.astStringTextType)
     }
+    "Perform automatically with 'Option[String]'" in {
+      val value: TextType = Option(classOf[String])
+      value must beEqualTo(TextTypes.optionalAstStringTextType)
+    }
     "Perform automatically with 'Char'" in {
       val value: TextType = Char
       value must beEqualTo(TextTypes.astCharacterTextType)
+    }
+    "Perform automatically with 'Option[Char]'" in {
+      val value: TextType = Option(Char)
+      value must beEqualTo(TextTypes.optionalAstCharTextType)
     }
   }
 

@@ -5,6 +5,7 @@ import types.primitives.numeric.NumericTypes
 import types.primitives.text.TextTypes
 import types.primitives.timestamp.TimestampTypes
 import types.primitives.uuid.UuidTypes
+import types.utils.TypeNameUtils
 
 import scala.annotation.{compileTimeOnly, tailrec}
 import scala.collection.immutable.Seq
@@ -15,7 +16,7 @@ import scala.meta._
 //Before:
 //
 //@CustomType
-//case class Test(a: Int, b: String, c: Float)
+//case class Test(a: Int, b: String, c: Float, d: Option[java.time.LocalDate])
 //
 //After:
 //
@@ -23,6 +24,7 @@ import scala.meta._
 //
 //object Test extends _root_.types.Type {
 //  override val typeName: String = "Test"
+//  override val isRequired: Boolean = true
 //
 //  override def structureJson: _root_.io.circe.Json = {
 //    import _root_.types._
@@ -32,10 +34,13 @@ import scala.meta._
 //    val objectPropertiesJson =
 //        JsonObject.fromMap(
 //          _root_.scala.collection.immutable.ListMap(
-//             "type" -> "object".asJson
-//            ) + ("properties" -> objectTypesJson)
+//             "type" -> "object".asJson,
+//             "properties" -> objectTypesJson
+//          )
 //        ).asJson
-//    JsonObject.fromMap(_root_.scala.collection.immutable.Map("Test" -> objectPropertiesJson)).asJson
+//    JsonObject.fromMap(
+//     _root_.scala.collection.immutable.Map("Test" -> objectPropertiesJson)
+//    ).asJson
 //  }
 //
 //  override def toString: String = structureJson.spaces2
@@ -45,7 +50,8 @@ import scala.meta._
 //     _root_.scala.collection.immutable.ListMap[String, types.Type](
 //          ("a", Int),
 //          ("b", classOf[String]),
-//          ("c", Float)
+//          ("c", Float),
+//          ("d", Option(classOf[java.time.LocalDate]))
 //     )
 //  }
 //}
@@ -83,7 +89,7 @@ private object MacroImpl {
 
         val Defn.Class(_, name, _, ctor, _) = cls
 
-        val className = "\"" + name.value +"\""
+        val className = "\"" + name.value + "\""
 
         // Adds to the companion object the interface 'Type' and its newly generated methods.
         val Defn.Object(_, _, companionTemplate) = companion
@@ -94,6 +100,7 @@ private object MacroImpl {
         )
         val newCompanionClassMethods = Seq(
           typeNameMethod(className),
+          isRequiredMethod,
           structureJsonMethod(name, ctor),
           toStringMethodOverride,
           typeMapMethod(ctor)
@@ -121,10 +128,15 @@ private object MacroImpl {
   private[this] val typeParent = ctor"_root_.types.Type"
 
   /**
-    * Generates the method
+    * Generates the method implementing [[Type.typeName]] on the expanded companion object.
     */
   private[this] def typeNameMethod(className: String): Defn.Val =
     q"override val typeName: String = ${Term.Name(className)}"
+
+  /**
+    * By default [[CustomType]]s are required.
+    */
+  private[this] val isRequiredMethod: Defn.Val = q"override val isRequired: Boolean = true"
 
   /**
     * Method for serializing the [[Type]] structure as a JSON.
@@ -179,18 +191,35 @@ private object MacroImpl {
         val paramName: String = param.name.syntax
         val typeName: String = param.decltpe.get.toString()
 
+        val parsedTypeName =
+          TypeNameUtils.parseTypeName(typeName, removePredecessorsInOption = false)
+
         val isNumericType = NumericTypes.typeNameToBabelType(typeName).isDefined
         val isTimeType = TimestampTypes.typeNameToBabelType(typeName).isDefined
         val isTextType = TextTypes.typeNameToBabelType(typeName).isDefined
         val isUuidType = UuidTypes.typeNameToBabelType(typeName).isDefined
-        val isCharType = if (!isTextType) false else typeName.endsWith("Char")
+        val isCharType = isTextType && parsedTypeName.typeName.endsWith("Char")
         val isDateType = DateTypes.typeNameToBabelType(typeName).isDefined
 
-        if (isNumericType || isCharType) {
-          q"($paramName, ${Term.Name(typeName)})"
-        } else if (isTimeType || isTextType || isUuidType || isDateType) {
-          q"($paramName, classOf[${Type.Name(typeName)}])"
+        val primitiveType = isNumericType || isCharType
+        val supportedNonPrimitiveType = isTimeType || isTextType || isUuidType || isDateType
+
+        if (primitiveType) {
+          // Primitive types from scala, use implicit conversion directly.
+          if (parsedTypeName.isRequired) {
+            q"($paramName, ${Term.Name(typeName)})"
+          } else {
+            q"($paramName, Option(${Term.Name(parsedTypeName.typeName)}))"
+          }
+        } else if (supportedNonPrimitiveType) {
+          // Supported non-primitive type, use 'classOf' for forcing implicit conversion
+          if (parsedTypeName.isRequired) {
+            q"($paramName, classOf[${Type.Name(typeName)}])"
+          } else {
+            q"($paramName, Option(classOf[${Type.Name(parsedTypeName.typeName)}]))"
+          }
         } else {
+          // Non-supported Type
           abort(s"Type '$typeName' is unsupported")
         }
       }

@@ -7,9 +7,14 @@ import java.util.UUID
 /**
   * Represents a Babel primitive type representing a [[UUID]] in the AST.
   */
-case class UuidType private[types] (override val typeName: String,
+case class UuidType private[types] (override val isRequired: Boolean,
                                     override val constraints: Seq[UuidTypeConstraint])
     extends PrimitiveType[UuidTypeConstraint] {
+
+  /**
+    * @inheritdoc
+    */
+  override val typeName: String = UuidType.typeName
 
   /**
     * Copies the type adding/replacing the minimum date constraint
@@ -24,7 +29,7 @@ case class UuidType private[types] (override val typeName: String,
     */
   private[this] def withConstraint(constraint: UuidTypeConstraint): UuidType = {
     @inline val otherConstraints = this.constraints.filterNot(_.name == constraint.name)
-    UuidType(otherConstraints :+ constraint: _*)
+    copy(constraints = otherConstraints :+ constraint)
   }
 }
 
@@ -40,8 +45,8 @@ object UuidType {
 
   /**
     * Apply method needed for generating a [[UuidType]]
-    * from the given constraints.
+    * from the given constraints supposing it is required in the AST.
     */
   private[types] def apply(constraints: UuidTypeConstraint*): UuidType =
-    UuidType(typeName, constraints.toSeq)
+    UuidType(isRequired = true, constraints)
 }
