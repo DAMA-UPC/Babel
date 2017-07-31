@@ -5,6 +5,11 @@ scala:
 
 jdk: oraclejdk8
 
+script:
+   - sbt compile
+   - sbt test:compile
+   - sbt test
+
 cache:
   directories:
     - $HOME/.m2/repository
