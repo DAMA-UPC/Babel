@@ -5,7 +5,6 @@ name := "Babel"
 lazy val dependencies: Seq[Def.Setting[_]] = Seq(
   libraryDependencies ++= {
     val shapelessVersion = "2.3.2"
-    val sourceCodeVersion = "0.1.4"
     val catsVersion = "0.9.0"
     val circeVersion = "0.8.0"
     val specs2Version = "3.9.4"
@@ -13,8 +12,6 @@ lazy val dependencies: Seq[Def.Setting[_]] = Seq(
     Seq(
       // https://github.com/milessabin/shapeless
       "com.chuusai" %% "shapeless" % shapelessVersion,
-      // https://github.com/lihaoyi/sourcecode
-      "com.lihaoyi" %% "sourcecode" % sourceCodeVersion,
       // https://github.com/typelevel/cats
       "org.typelevel" %% "cats" % catsVersion,
       // https://github.com/circe/circe
