@@ -26,9 +26,10 @@ class EdgeSpec extends Specification with ScalaCheck {
   /**
     * [[Edge.toString]] method testSuite
     */
-  private[this] def testToString[T](classGenerator: (T, T) => Edge[T],
-                                    stringGenerator: (T, T) => String
-                                   )(implicit arbA: Arbitrary[T]): ScalaCheckFunction2[T, T, Boolean] = {
+  private[this] def testToString[T](
+    classGenerator: (T, T) => Edge[T],
+    stringGenerator: (T, T) => String
+  )(implicit arbA: Arbitrary[T]): ScalaCheckFunction2[T, T, Boolean] = {
     prop { (source: T, target: T) =>
       classGenerator(source, target).toString == stringGenerator(source, target).toString
     }
@@ -36,8 +37,8 @@ class EdgeSpec extends Specification with ScalaCheck {
 
   "Undirected Edges" should {
     "toString() method prints the elements separated by a '-' at Undirected edges" should {
-      def classGenerator[T]: (T, T) => Edge.Undirected[T] = (a: T, b: T) =>
-        Edge.Undirected[T](source = V(a), target = V(b))
+      def classGenerator[T]: (T, T) => Edge.Undirected[T] =
+        (a: T, b: T) => Edge.Undirected[T](source = V(a), target = V(b))
 
       def stringGenerator[T]: (T, T) => String = (a: T, b: T) => s"$a - $b"
 
@@ -58,8 +59,8 @@ class EdgeSpec extends Specification with ScalaCheck {
 
   "Directed Edges" should {
     "toString() method prints the elements separated by a '->' at Directed edges" should {
-      def classGenerator[T]: (T, T) => Edge[T] = (a: T, b: T) =>
-        Edge.Directed[T](source = V(a), target = V(b))
+      def classGenerator[T]: (T, T) => Edge[T] =
+        (a: T, b: T) => Edge.Directed[T](source = V(a), target = V(b))
 
       def stringGenerator[T]: (T, T) => String = (a: T, b: T) => s"$a -> $b"
 

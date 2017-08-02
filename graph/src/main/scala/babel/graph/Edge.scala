@@ -32,12 +32,11 @@ object Edge {
     * @param target @see [[Edge.target]]
     * @tparam ID with the unique Vertex identifier type.
     */
-  case class Undirected[ID](override val source: Vertex[ID],
-                            override val target: Vertex[ID]) extends Edge[ID] {
+  case class Undirected[ID](override val source: Vertex[ID], override val target: Vertex[ID])
+      extends Edge[ID] {
 
     override def toString: String = s"${source.id} - ${target.id}"
   }
-
 
   /**
     * Edge representation for Directed Edges.
@@ -46,8 +45,8 @@ object Edge {
     * @param target @see [[Edge.target]]
     * @tparam ID with the unique Vertex identifier type.
     */
-  case class Directed[ID](override val source: Vertex[ID],
-                          override val target: Vertex[ID]) extends Edge[ID] {
+  case class Directed[ID](override val source: Vertex[ID], override val target: Vertex[ID])
+      extends Edge[ID] {
 
     override def toString: String = s"${source.id} -> ${target.id}"
   }

@@ -46,7 +46,7 @@ class CustomTypeOptionalPrimitiveTypeMapValuesSuite extends Specification {
         BigDecimalTest.typeMap must beEqualTo(Map[String, Type]("value" -> Option(BigDecimal)))
 
       testByte && testShort && testInt && testLong &&
-        testBigInt && testFloat && testDouble && testBigDecimal
+      testBigInt && testFloat && testDouble && testBigDecimal
     }
     "work with all optional timestamp types" in {
 
@@ -64,7 +64,9 @@ class CustomTypeOptionalPrimitiveTypeMapValuesSuite extends Specification {
 
       @CustomType class InstantDateTest(value: Option[Instant])
       val testInstantType =
-        InstantDateTest.typeMap must beEqualTo(Map[String, Type]("value" -> Option(classOf[Instant])))
+        InstantDateTest.typeMap must beEqualTo(
+          Map[String, Type]("value" -> Option(classOf[Instant]))
+        )
 
       @CustomType class ZonedDateTimeTest(value: Option[ZonedDateTime])
       val testZonedDateTimeType =
@@ -94,7 +96,9 @@ class CustomTypeOptionalPrimitiveTypeMapValuesSuite extends Specification {
 
       @CustomType class LocalDateTest(value: Option[LocalDate])
       val testLocalDateType =
-        LocalDateTest.typeMap must beEqualTo(Map[String, Type]("value" -> Option(classOf[LocalDate])))
+        LocalDateTest.typeMap must beEqualTo(
+          Map[String, Type]("value" -> Option(classOf[LocalDate]))
+        )
 
       testJavaDateType && testLocalDateType
     }
