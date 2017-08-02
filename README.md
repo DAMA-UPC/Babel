@@ -12,4 +12,20 @@ On the project root:
 sbt test
 ```
 
-*Note: SBT must be installed on the host machine.*
+### Publishing
+
+#### STEP 1: Log into the bintray account
+
+In the project root, using SBT set the Bintray account login credentials:
+
+```
+sbt bintrayChangeCredentials
+```
+
+#### STEP 2: Publish the project to Bintray
+
+On the project root:
+
+```
+sbt publish
+```

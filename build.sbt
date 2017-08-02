@@ -1,15 +1,13 @@
 name := "Babel"
 
-version := "0.0.1-SNAPSHOT"
-
-organization := "edu.upc.dama"
-
-scalaVersion := "2.12.3"
+lazy val commonSettings: Seq[Def.Setting[_]] = Seq(
+  scalaVersion := "2.12.3",
+  organization := "edu.upc.dama"
+)
 
 /*************   DEPENDENCIES   *************/
 
 lazy val dependencies: Seq[Def.Setting[_]] = Seq(
-  scalaVersion := "2.12.3",
   libraryDependencies ++= {
     val shapelessVersion = "2.3.2"
     val sourceCodeVersion = "0.1.4"
@@ -70,8 +68,18 @@ testOptions += Tests.Argument(TestFrameworks.JUnit, "-q", "-v", "-s", "-a")
 wartremoverErrors in (Compile, compile) ++= Warts.allBut(Wart.FinalCaseClass)
 wartremoverErrors in (Test, test) ++= Warts.allBut(Wart.FinalCaseClass, Wart.NonUnitStatements)
 
+/*********    Bintray Publishing    *********/
+
+val bintraySettings = Seq(
+  bintrayOrganization := Some("dama-upc"),
+  bintrayRepository := "Babel-Platform",
+  licenses :=  Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
+  homepage := Some(url("https://github.com/DAMA-UPC/Babel"))
+)
+
 /**************    Modules    ***************/
 
-lazy val types = project.settings(dependencies, macroDependencies)
-lazy val generators = project.settings(dependencies)
-lazy val core = project.settings(dependencies).dependsOn(types, generators)
+lazy val root = (project in file(".")).settings(commonSettings, bintraySettings)
+lazy val types = project.settings(commonSettings, dependencies, bintraySettings, macroDependencies)
+lazy val generators = project.settings(commonSettings, dependencies, bintraySettings)
+lazy val core = project.settings(commonSettings, dependencies, bintraySettings).dependsOn(types, generators)
