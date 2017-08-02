@@ -1,10 +1,5 @@
 name := "Babel"
 
-lazy val commonSettings: Seq[Def.Setting[_]] = Seq(
-  scalaVersion := "2.12.3",
-  organization := "edu.upc.dama"
-)
-
 /*************   DEPENDENCIES   *************/
 
 lazy val dependencies: Seq[Def.Setting[_]] = Seq(
@@ -55,7 +50,7 @@ lazy val macroDependencies: Seq[Def.Setting[_]] = Seq(
   libraryDependencies += "org.scalameta" %% "contrib" % "1.8.0"
 )
 
-/*************   TEST OPTIONS   *************/
+/************   Test Options   *************/
 
 scalacOptions in Test ++= Seq("-Yrangepos")
 
@@ -77,9 +72,21 @@ val bintraySettings = Seq(
   homepage := Some(url("https://github.com/DAMA-UPC/Babel"))
 )
 
+/**********    Common settings    ***********/
+
+lazy val commonSettings: Seq[Def.Setting[_]] = Seq(
+  scalaVersion := "2.12.3",
+  organization := "edu.upc.dama"
+) ++ bintraySettings ++ dependencies
+
 /**************    Modules    ***************/
 
-lazy val root = (project in file(".")).settings(commonSettings, bintraySettings)
-lazy val types = project.settings(commonSettings, dependencies, bintraySettings, macroDependencies)
-lazy val generators = project.settings(commonSettings, dependencies, bintraySettings)
-lazy val core = project.settings(commonSettings, dependencies, bintraySettings).dependsOn(types, generators)
+lazy val types = project.settings(commonSettings, macroDependencies)
+lazy val generators = project.settings(commonSettings)
+lazy val graph = project.settings(commonSettings)
+
+// Main module, depends on all the other modules
+lazy val root =
+  (project in file("."))
+    .settings(commonSettings)
+    .aggregate(types, generators, graph)

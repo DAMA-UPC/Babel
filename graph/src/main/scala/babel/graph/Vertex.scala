@@ -1,8 +1,8 @@
-package models
+package babel.graph
 
 /**
   * Represents a Vertex of the generated graph.
-  * @tparam ID of the [[Vertex#id]] in the generated graph.
+  * @tparam ID of the generated [[Vertex]] unique identifiers.
   */
 trait Vertex[ID] {
 
