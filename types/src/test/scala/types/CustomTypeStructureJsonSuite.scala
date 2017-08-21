@@ -46,8 +46,8 @@ class CustomTypeStructureJsonSuite extends Specification {
     "work with multiple parameter classes" in {
       @CustomType class MultipleParameterClass(stringValue: String, floatValue: Float)
 
-      MultipleParameterClass.structureJson.noSpaces must beEqualTo(
-        JsonUglyfier.uglyfy("""
+      MultipleParameterClass.structureJson.noSpaces must
+        beEqualTo(JsonUglyfier.uglyfy("""
               |{
               | "MultipleParameterClass": {
               |   "type": "object",
@@ -86,47 +86,7 @@ class CustomTypeStructureJsonSuite extends Specification {
               |     }
               |   }
               | }
-              |}""".stripMargin)
-      )
-    }
-    "work when already having a companion object" in {
-      val expectation: Int = 42
-
-      @CustomType class ClassWithCompanion(value: Int)
-
-      object ClassWithCompanion {
-        def testValue: Int = expectation
-      }
-
-      (ClassWithCompanion.structureJson.noSpaces must beEqualTo(
-        JsonUglyfier.uglyfy("""
-              |{
-              | "ClassWithCompanion": {
-              |   "type": "object",
-              |   "properties": {
-              |     "value": {
-              |       "typeName": "Number",
-              |       "isRequired": true,
-              |       "constraints": [
-              |         {
-              |           "name": "MinValue",
-              |           "value": "-2147483648"
-              |         },
-              |         {
-              |           "name": "MaxValue",
-              |           "value": "2147483647"
-              |         },
-              |         {
-              |            "name": "MaxNumberDecimals",
-              |            "value": "0"
-              |          }
-              |        ]
-              |      }
-              |    }
-              |  }
-              |}
-            """.stripMargin)
-      )) && (ClassWithCompanion.testValue must beEqualTo(expectation))
+              |}""".stripMargin))
     }
   }
 }

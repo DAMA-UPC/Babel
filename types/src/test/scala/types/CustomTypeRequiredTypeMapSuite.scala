@@ -13,9 +13,7 @@ import scala.collection.immutable.SortedMap
   * as expected when working that have a 'Non-Null' constraint
   * on them in the AST.
   */
-class CustomTypeRequiredPrimitiveTypeMapSuite extends Specification {
-
-  // TODO: Test the macro when pointing to other CustomType classes.
+class CustomTypeRequiredTypeMapSuite extends Specification {
 
   "Macro annotation expansion" should {
 
@@ -136,17 +134,10 @@ class CustomTypeRequiredPrimitiveTypeMapSuite extends Specification {
 
       testLocalDateTimeType && testByteType && testCharType
     }
-    "work when already having a companion object" in {
-
-      val expectedMethodResult: Int = 42
-
-      @CustomType class TestWithCompanionObject(stringValue: Byte, floatValue: Float)
-      object TestWithCompanionObject {
-        def testMethod: Int = expectedMethodResult
-      }
-      (TestWithCompanionObject.typeMap must beEqualTo(
-        SortedMap[String, Type]("stringValue" -> Byte, "floatValue" -> Float)
-      )) && (TestWithCompanionObject.testMethod must beEqualTo(expectedMethodResult))
+    "work with nested custom types" should {
+      @CustomType class NestedClass(v: Byte)
+      @CustomType class Test(nestedClass: NestedClass)
+      Test.typeMap must beEqualTo(SortedMap[String, Type]("nestedClass" -> NestedClass))
     }
   }
 }

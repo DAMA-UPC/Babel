@@ -12,7 +12,7 @@ class CustomTypeIsRequiredMethodSuite extends Specification {
     @CustomType class Test(value: Int)
 
     "Must generate in the companion object the method 'isRequired: Boolean' returning a true" in {
-      // Custom Types are true, if not specifying the oposite.
+      // Custom Types are required by default.
       Test.isRequired must beTrue
     }
   }

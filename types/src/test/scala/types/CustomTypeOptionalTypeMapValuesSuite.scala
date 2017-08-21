@@ -12,7 +12,7 @@ import scala.collection.immutable.SortedMap
   * generation of the `typeMap: SortedMap[String, Type]` method
   * as expected when working with nullable AST values.
   */
-class CustomTypeOptionalPrimitiveTypeMapValuesSuite extends Specification {
+class CustomTypeOptionalTypeMapValuesSuite extends Specification {
 
   "Macro annotation expansion" should {
 
@@ -122,6 +122,12 @@ class CustomTypeOptionalPrimitiveTypeMapValuesSuite extends Specification {
         CharTypeTest.typeMap must beEqualTo(Map[String, Type]("value" -> Option(Char)))
 
       testLocalDateTimeType && testByteType && testCharType
+    }
+    "work with optional nested custom types" should {
+      @CustomType class NestedClass(v: Option[Byte])
+      @CustomType class Test(nestedClass: Option[NestedClass])
+
+      Test.typeMap.values.forall(!_.isRequired) must beTrue
     }
   }
 }

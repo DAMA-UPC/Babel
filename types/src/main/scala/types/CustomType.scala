@@ -22,7 +22,12 @@ import scala.meta._
 //
 //case class Test(a: Int, b: String, c: Float)
 //
-//object Test extends _root_.types.Type {
+//object Test extends TestCompanion(isRequired = true)
+//object OptionalTest extends TestCompanion(isRequired = false)
+//
+//private[this] abstract class TestCompanion(override val isRequired: Boolean)
+//  extends _root_.types.Type {
+//
 //  override val typeName: String = "Test"
 //  override val isRequired: Boolean = true
 //
@@ -74,52 +79,71 @@ private object MacroImpl {
   /**
     * [[CustomType]] macro implementation.
     */
-  @tailrec
-  def impl(defn: Stat): Block = {
-    defn match {
+  def impl(defn: Stat): Block = defn match {
 
-      case cls@Defn.Class(_, name, _, _, _) if cls.tparams.isEmpty =>
-        // The class doesn't have a companion, since this macro need a companion it
-        // creates it and calls the method recursively again.
-        val companion = q"object ${Term.Name(name.value)} { }"
-        impl(Term.Block(Seq(cls, companion)))
+    case Term.Block(_) =>
+      abort("CustomType classes must be a class without companions.")
 
-      case Term.Block(Seq(cls: Defn.Class, companion: Defn.Object)) if cls.tparams.isEmpty =>
-        // Its already a block, start adding the required methods/interfaces.
+    case Defn.Class(_, _, tparams, _, _) if tparams.nonEmpty =>
+      abort("CustomType classes must not have any type parameter")
 
-        val Defn.Class(_, name, _, ctor, _) = cls
+    case cls@Defn.Class(_, name, _, ctor, _) if cls.tparams.isEmpty =>
 
-        val className = "\"" + name.value + "\""
+      val classTermName = Term.Name(name.value)
 
-        // Adds to the companion object the interface 'Type' and its newly generated methods.
-        val Defn.Object(_, _, companionTemplate) = companion
-        val Template(_, companionParents, _, _) = companionTemplate
+      // Generates the base companion object.
+      val baseCompanionClass = baseCompanionObject(cls)
 
-        val newCompanionObjectParents = companionTemplate.copy(
-          parents = companionParents :+ typeParent
-        )
-        val newCompanionClassMethods = Seq(
-          typeNameMethod(className),
-          isRequiredMethod,
-          structureJsonMethod(name, ctor),
-          toStringMethodOverride,
-          typeMapMethod(ctor)
-        )
+      // Generates a companion abstract companion class containing the information from both companions.
+      val companionObjectsParent = Ctor.Ref.Name(s"${name}Companion")
 
-        val companionClassMethods = newCompanionObjectParents.stats.getOrElse(Nil) ++ newCompanionClassMethods
+      // object Test extends TestCompanion (isRequired = true)
+      val companion =
+        q"object ${Term.Name(name.value)} extends $companionObjectsParent (isRequired = true)"
 
-        val newCompanion = companion.copy(
-          templ = newCompanionObjectParents.copy(stats = Some(companionClassMethods))
-        )
-        // Returns the class with the added interfaces.
-        Term.Block(Seq(cls, newCompanion))
+      // object OptionalTest extends TestCompanion (isRequired = false)
+      val optionalClassName = Term.Name(s"Optional${name.value}")
 
-      case inputDefinition =>
+      val companionOptionalValues =
+        q"object $optionalClassName extends $companionObjectsParent (isRequired = false)"
 
-        // Annotating a class or case class with parameters is forbidden
-        println(inputDefinition.structure)
-        abort("@CustomType must have a companion object.")
-    }
+      Term.Block(Seq(cls, companion, companionOptionalValues, baseCompanionClass))
+
+    case inputDefinition =>
+
+      // Annotating a class or case class with parameters is forbidden
+      println(inputDefinition.structure)
+      abort("@CustomType must be a class with parameters.")
+  }
+
+  /**
+    * Constructs the base companion class.
+    */
+  private[this] def baseCompanionObject(cls: Defn.Class): Defn.Class = {
+
+    val abstractCompanionName = Type.Name(s"${cls.name.value}Companion")
+    val baseCompanion: Defn.Class =
+      q"private[this] abstract class $abstractCompanionName(override val isRequired: Boolean) { }"
+
+    val companionTemplate: Template = baseCompanion.templ
+    val companionParents = companionTemplate.parents
+
+    val baseCompanionObjectWithParents: Template = companionTemplate.copy(
+      parents = companionParents :+ typeParent
+    )
+    val newCompanionClassMethods = Seq(
+      typeNameMethod(cls.name.value),
+      structureJsonMethod(cls.name, cls.ctor),
+      toStringMethodOverride,
+      typeMapMethod(cls.ctor)
+    )
+
+    val companionClassMethods =
+      baseCompanionObjectWithParents.stats.getOrElse(Nil) ++ newCompanionClassMethods
+
+    baseCompanion.copy(
+      templ = baseCompanionObjectWithParents.copy(stats = Some(companionClassMethods))
+    )
   }
 
   /**
@@ -131,12 +155,7 @@ private object MacroImpl {
     * Generates the method implementing [[Type.typeName]] on the expanded companion object.
     */
   private[this] def typeNameMethod(className: String): Defn.Val =
-    q"override val typeName: String = ${Term.Name(className)}"
-
-  /**
-    * By default [[CustomType]]s are required.
-    */
-  private[this] val isRequiredMethod: Defn.Val = q"override val isRequired: Boolean = true"
+    q"override val typeName: String = ${Term.Name("\"" + className + "\"")}"
 
   /**
     * Method for serializing the [[Type]] structure as a JSON.
@@ -219,8 +238,12 @@ private object MacroImpl {
             q"($paramName, Option(classOf[${Type.Name(parsedTypeName.typeName)}]))"
           }
         } else {
-          // Non-supported Type
-          abort(s"Type '$typeName' is unsupported")
+          if (parsedTypeName.isRequired) {
+            q"($paramName, ${Term.Name(typeName)})"
+          } else {
+            val optionalTypeName = s"Optional${parsedTypeName.typeName}"
+            q"($paramName, ${Term.Name(optionalTypeName)})"
+          }
         }
       }
     }
