@@ -1,8 +1,30 @@
 name := "Babel"
 
-/*************   DEPENDENCIES   *************/
+/************   Test Options   *************/
 
-lazy val dependencies: Seq[Def.Setting[_]] = Seq(
+scalacOptions in Test ++= Seq("-Yrangepos")
+
+parallelExecution in Test := true
+
+testOptions += Tests.Argument(TestFrameworks.JUnit, "-q", "-v", "-s", "-a")
+
+/********   Static Code Analyzer   **********/
+
+wartremoverErrors in (Compile, compile) ++= Warts.allBut(Wart.FinalCaseClass)
+wartremoverErrors in (Test, test) ++= Warts.allBut(Wart.FinalCaseClass, Wart.NonUnitStatements)
+
+/*********    Bintray Publishing    *********/
+
+val bintraySettings = Seq(
+  bintrayOrganization := Some("dama-upc"),
+  bintrayRepository := "Babel-Platform",
+  licenses :=  Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
+  homepage := Some(url("https://github.com/DAMA-UPC/Babel"))
+)
+
+/**********    Common settings    ***********/
+
+lazy val commonDependencies: Seq[Def.Setting[_]] = Seq(
   libraryDependencies ++= {
     val shapelessVersion = "2.3.2"
     val catsVersion = "0.9.0"
@@ -31,7 +53,12 @@ lazy val dependencies: Seq[Def.Setting[_]] = Seq(
   addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0-M10" cross CrossVersion.full)
 )
 
-lazy val macroDependencies: Seq[Def.Setting[_]] = Seq(
+lazy val commonSettings: Seq[Def.Setting[_]] = Seq(
+  scalaVersion := "2.12.3",
+  organization := "edu.upc.dama"
+) ++ bintraySettings ++ commonDependencies
+
+lazy val macroBasedModuleSettings: Seq[Def.Setting[_]] = Seq(
   // A dependency on macro paradise 3.x is required to both write and expand
   // new-style macros.  This is similar to how it works for old-style macro
   // annotations and a dependency on macro paradise 2.x.
@@ -45,40 +72,11 @@ lazy val macroDependencies: Seq[Def.Setting[_]] = Seq(
   // macros and a dependency on scala.reflect.
   libraryDependencies += "org.scalameta" %% "scalameta" % "1.8.0",
   libraryDependencies += "org.scalameta" %% "contrib" % "1.8.0"
-)
-
-/************   Test Options   *************/
-
-scalacOptions in Test ++= Seq("-Yrangepos")
-
-parallelExecution in Test := true
-
-testOptions += Tests.Argument(TestFrameworks.JUnit, "-q", "-v", "-s", "-a")
-
-/************    WartRemover    *************/
-
-wartremoverErrors in (Compile, compile) ++= Warts.allBut(Wart.FinalCaseClass)
-wartremoverErrors in (Test, test) ++= Warts.allBut(Wart.FinalCaseClass, Wart.NonUnitStatements)
-
-/*********    Bintray Publishing    *********/
-
-val bintraySettings = Seq(
-  bintrayOrganization := Some("dama-upc"),
-  bintrayRepository := "Babel-Platform",
-  licenses :=  Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
-  homepage := Some(url("https://github.com/DAMA-UPC/Babel"))
-)
-
-/**********    Common settings    ***********/
-
-lazy val commonSettings: Seq[Def.Setting[_]] = Seq(
-  scalaVersion := "2.12.3",
-  organization := "edu.upc.dama"
-) ++ bintraySettings ++ dependencies
+) ++ commonSettings
 
 /**************    Modules    ***************/
 
-lazy val types = project.settings(commonSettings, macroDependencies)
+lazy val types = project.settings(macroBasedModuleSettings)
 lazy val generators = project.settings(commonSettings)
 lazy val graph = project.settings(commonSettings)
 
