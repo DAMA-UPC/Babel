@@ -16,10 +16,8 @@ addSbtPlugin("org.foundweekends" % "sbt-bintray" % "0.5.1")
 addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.3.1")
 // https://github.com/puffnfresh/wartremover
 addSbtPlugin("org.wartremover" % "sbt-wartremover" % "2.1.1")
-// https://github.com/sbt/sbt-release
-addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.5")
 // https://github.com/alexarchambault/coursier
-addSbtPlugin("io.get-coursier" % "sbt-coursier" % "1.0.0-RC8")
+addSbtPlugin("io.get-coursier" % "sbt-coursier" % "1.0.0-RC10")
 
 // ------------- SBT OPTIONS ----------- //
 logLevel := Level.Warn
