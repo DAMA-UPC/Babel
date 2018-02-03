@@ -26,16 +26,13 @@ val bintraySettings = Seq(
 
 lazy val commonDependencies: Seq[Def.Setting[_]] = Seq(
   libraryDependencies ++= {
-    val shapelessVersion = "2.3.2"
-    val catsVersion = "0.9.0"
-    val circeVersion = "0.8.0"
-    val specs2Version = "3.9.4"
-    val scalaCheckVersion = "1.13.5"
+    val shapelessVersion = "2.3.3"
+    val circeVersion = "0.9.3"
+    val specs2Version = "4.2.0"
+    val scalaCheckVersion = "1.14.0"
     Seq(
       // https://github.com/milessabin/shapeless
       "com.chuusai" %% "shapeless" % shapelessVersion,
-      // https://github.com/typelevel/cats
-      "org.typelevel" %% "cats" % catsVersion,
       // https://github.com/circe/circe
       "io.circe" %% "circe-core" % circeVersion,
       "io.circe" %% "circe-generic" % circeVersion,
@@ -50,12 +47,13 @@ lazy val commonDependencies: Seq[Def.Setting[_]] = Seq(
       "org.scalacheck" %% "scalacheck" % scalaCheckVersion % "test"
     )
   },
-  addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0-M10" cross CrossVersion.full)
+  addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0-M11" cross CrossVersion.full)
 )
 
 lazy val commonSettings: Seq[Def.Setting[_]] = Seq(
-  scalaVersion := "2.12.3",
-  organization := "edu.upc.dama"
+  scalaVersion := "2.12.4",
+  organization := "edu.upc.dama",
+  scalacOptions += "-Ypartial-unification"
 ) ++ bintraySettings ++ commonDependencies
 
 lazy val macroBasedModuleSettings: Seq[Def.Setting[_]] = Seq(
