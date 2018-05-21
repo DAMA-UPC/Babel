@@ -25,7 +25,7 @@ import scala.meta._
 //object Test extends TestCompanion(isRequired = true)
 //object OptionalTest extends TestCompanion(isRequired = false)
 //
-//private[this] abstract class TestCompanion(override val isRequired: Boolean)
+//private sealed abstract class TestCompanion(override val isRequired: Boolean)
 //  extends _root_.types.Type {
 //
 //  override val typeName: String = "Test"
@@ -123,7 +123,7 @@ private object MacroImpl {
 
     val abstractCompanionName = Type.Name(s"${cls.name.value}Companion")
     val baseCompanion: Defn.Class =
-      q"private[this] abstract class $abstractCompanionName(override val isRequired: Boolean) { }"
+      q"private sealed abstract class $abstractCompanionName(override val isRequired: Boolean) { }"
 
     val companionTemplate: Template = baseCompanion.templ
     val companionParents = companionTemplate.parents
