@@ -255,3 +255,6 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
+
+# IntelIJ
+*.iml
