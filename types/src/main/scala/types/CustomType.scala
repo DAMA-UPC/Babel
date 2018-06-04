@@ -7,8 +7,9 @@ import types.primitives.timestamp.TimestampTypes
 import types.primitives.uuid.UuidTypes
 import types.utils.TypeNameUtils
 
-import scala.annotation.{compileTimeOnly, tailrec}
+import scala.annotation.compileTimeOnly
 import scala.collection.immutable.Seq
+import scala.meta.Ctor.Ref
 import scala.meta.Term.{Block, Param}
 import scala.meta.Type.Name
 import scala.meta._
@@ -70,36 +71,43 @@ import scala.meta._
   */
 @compileTimeOnly("@CustomType not expanded")
 class CustomType extends scala.annotation.StaticAnnotation {
-
-  inline def apply(defn: Any): Any = meta(MacroImpl.impl(defn))
+  inline def apply(defn: Any): Any = meta(MacroImpl.impl(defn, isVertex = false, isEdge = false))
 }
 
-private object MacroImpl {
+private[types] object MacroImpl {
+
+  /**
+    * Common parent for all custom types.
+    */
+  private[this] val typeParent = ctor"_root_.types.Type"
+
+  private[this] val edgeTypeParent = ctor"_root_.types.EdgeModel"
+
+  private[this] val vertexTypeParent = ctor"_root_.types.VertexModel"
 
   /**
     * [[CustomType]] macro implementation.
     */
-  def impl(defn: Stat): Block = defn match {
+  def impl(defn: Stat, isVertex: Boolean, isEdge: Boolean): Block = defn match {
 
     case Term.Block(_) =>
       abort("CustomType classes must be a class without companions.")
 
-    case Defn.Class(_, _, tparams, _, _) if tparams.nonEmpty =>
+    case Defn.Class(_, _, typeParameters, _, _) if typeParameters.nonEmpty =>
       abort("CustomType classes must not have any type parameter")
 
-    case cls@Defn.Class(_, name, _, ctor, _) if cls.tparams.isEmpty =>
+    case cls@Defn.Class(_, name, _, _, _) if cls.tparams.isEmpty =>
 
       val classTermName = Term.Name(name.value)
 
       // Generates the base companion object.
-      val baseCompanionClass = baseCompanionObject(cls)
+      val baseCompanionClass = baseCompanionObject(cls, isVertex, isEdge)
 
       // Generates a companion abstract companion class containing the information from both companions.
-      val companionObjectsParent = Ctor.Ref.Name(s"${name}Companion")
+      val companionObjectsParent: Ref.Name = Ctor.Ref.Name(s"${name}Companion")
 
       // object Test extends TestCompanion (isRequired = true)
-      val companion =
-        q"object ${Term.Name(name.value)} extends $companionObjectsParent (isRequired = true)"
+      val companion = companionSignature(classTermName, companionObjectsParent, isVertex, isEdge)
 
       // object OptionalTest extends TestCompanion (isRequired = false)
       val optionalClassName = Term.Name(s"Optional${name.value}")
@@ -116,10 +124,25 @@ private object MacroImpl {
       abort("@CustomType must be a class with parameters.")
   }
 
+  private[this] def companionSignature(className: Term.Name,
+                                       companionObjectParent: Ref.Name,
+                                       isVertex: Boolean,
+                                       isEdge: Boolean): Defn.Object = {
+    if (isVertex) {
+      q"object $className extends $companionObjectParent (isRequired = true) with _root_.types.VertexModel"
+    } else if (isEdge) {
+      q"object $className extends $companionObjectParent (isRequired = true) with _root_.types.EdgeModel"
+    } else {
+      q"object $className extends $companionObjectParent (isRequired = true)"
+    }
+  }
+
   /**
     * Constructs the base companion class.
     */
-  private[this] def baseCompanionObject(cls: Defn.Class): Defn.Class = {
+  private[this] def baseCompanionObject(cls: Defn.Class,
+                                        isVertex: Boolean,
+                                        isEdge: Boolean): Defn.Class = {
 
     val abstractCompanionName = Type.Name(s"${cls.name.value}Companion")
     val baseCompanion: Defn.Class =
@@ -129,8 +152,11 @@ private object MacroImpl {
     val companionParents = companionTemplate.parents
 
     val baseCompanionObjectWithParents: Template = companionTemplate.copy(
-      parents = companionParents :+ typeParent
+      parents = (companionParents :+ typeParent)
+        ++ (if (isVertex) List(vertexTypeParent) else Nil)
+        ++ (if (isEdge) List(edgeTypeParent) else Nil)
     )
+
     val newCompanionClassMethods = Seq(
       typeNameMethod(cls.name.value),
       structureJsonMethod(cls.name, cls.ctor),
@@ -145,11 +171,6 @@ private object MacroImpl {
       templ = baseCompanionObjectWithParents.copy(stats = Some(companionClassMethods))
     )
   }
-
-  /**
-    * Common parent for all custom types.
-    */
-  private[this] val typeParent = ctor"_root_.types.Type"
 
   /**
     * Generates the method implementing [[Type.typeName]] on the expanded companion object.
@@ -205,7 +226,7 @@ private object MacroImpl {
   private[this] def typeMapMethod(ctor: Ctor.Primary): Defn.Def = {
 
     val namesToValues: Seq[Term.Tuple] = ctor.paramss.flatten.map {
-      (param: Param) => {
+      param: Param => {
 
         val paramName: String = param.name.syntax
         val typeName: String = param.decltpe.get.toString()

@@ -27,5 +27,4 @@ trait types extends NumericTypes with TimestampTypes with TextTypes with DateTyp
   @inline case object Now {
     val astName = "NOW()"
   }
-
 }
