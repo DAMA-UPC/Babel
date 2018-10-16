@@ -57,3 +57,15 @@ object ActorBirthDateGenerator extends PropertyGenerator[LocalDate] {
     )
 }
 ```
+
+### Defining graph structure generators.
+
+For defining graph structure generators, we need to implement
+the following interface:
+
+```scala
+trait GraphStructureGenerator[T] {
+  val run(n: Long): T
+  val getNumberNodes(numberEdges: Long): Long
+}
+```
