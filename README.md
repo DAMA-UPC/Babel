@@ -4,9 +4,9 @@
 WIP: Synthetic data generator framework
 
 
-![running-example](docs/running-example.png)
+![running-example](docs/running-example.png | width=500)
 
-### Step 1: Define the node models
+### Step 1: Definition of node models
 
 ```scala
 import babel._
@@ -29,7 +29,7 @@ import babel._
                   budgetInUSDollars: Option[Double])
 ```
 
-### Step 2: Define the edge models
+### Definition of Edge models
 
 ```scala
 import babel._
@@ -39,4 +39,21 @@ import java.time.LocalDate
 class Portrayed(characterName: String)
 ```
 
-WIP
+### Property generators definition
+
+```scala
+import babel._
+
+object ActorBirthDateGenerator extends PropertyGenerator[LocalDate] {
+
+  override def run(id: Id,
+                   r: (Id) => Long,
+                   dependencies: Any*): LocalDate =
+    LocalDateGenerator.nextLocalDate(
+      hash = r(id),
+      min = NOW().minusYears(90),
+      max = NOW(),
+      distribution = Distribution.Uniform
+    )
+}
+```
