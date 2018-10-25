@@ -8,7 +8,7 @@ On the project root:
 sbt test
 ```
 
-### Publishing
+### Publishing
 
 #### STEP 1: Log into the Bintray account
 
