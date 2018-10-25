@@ -14,7 +14,7 @@ Add the following snippet to the `build.sbt` file:
 
 ```sbtshell
 resolvers += "maven" at "https://dl.bintray.com/dama-upc/Babel-Platform"
-libraryDependencies += "edu.upc.dama" %% "babel" % "0.3.0"
+libraryDependencies += "edu.upc.dama" %% "babel" % "0.4.0"
 ```
 
 ### Definition of node models
