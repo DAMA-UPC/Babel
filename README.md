@@ -3,7 +3,21 @@
 
 ![running-example](docs/running-example.png)
 
-### Step 1: Definition of node models
+
+### Add dependency:
+
+https://bintray.com/dama-upc/Babel-Platform/babel
+
+#### If using the SBT tool:
+
+Add the following snippet to the `build.sbt` file:
+
+```sbtshell
+resolvers += "maven" at "https://dl.bintray.com/dama-upc/Babel-Platform"
+libraryDependencies += "edu.upc.dama" %% "babel" % "0.3.0"
+```
+
+### Definition of node models
 
 ```scala
 import babel._
@@ -32,7 +46,7 @@ import babel._
 import babel._
 import java.time.LocalDate
 
-@edge(source = Actor, target = Movie, cardinality = ManyToMany)
+@edge
 class Portrayed(characterName: String)
 ```
 
