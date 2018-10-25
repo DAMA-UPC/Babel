@@ -21,5 +21,5 @@ trait Type {
     * This method generates a JSON containing the
     * type structure definition.
     */
-  def structureJson: Json
+  def intermediateLanguage: Json
 }

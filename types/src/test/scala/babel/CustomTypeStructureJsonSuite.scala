@@ -5,15 +5,15 @@ import babel.utils.JsonUglyfier
 
 /**
   * Test that the macro [[CustomType]] method
-  * 'structureJson: Json' works as expected.
+  * 'intermediateLanguage: Json' works as expected.
   */
 class CustomTypeStructureJsonSuite extends Specification {
 
-  "Macro annotation expansion of the method: 'structureJson : Json'" should {
+  "Macro annotation expansion of the method: 'intermediateLanguage : Json'" should {
 
     "work with single parameter classes" in {
       @CustomType class SingleParameterClass(value: Int)
-      SingleParameterClass.structureJson.noSpaces must beEqualTo(
+      SingleParameterClass.intermediateLanguage.noSpaces must beEqualTo(
         JsonUglyfier.uglyfy("""
               |{
               |  "SingleParameterClass": {
@@ -46,7 +46,7 @@ class CustomTypeStructureJsonSuite extends Specification {
     "work with multiple parameter classes" in {
       @CustomType class MultipleParameterClass(stringValue: String, floatValue: Float)
 
-      MultipleParameterClass.structureJson.noSpaces must
+      MultipleParameterClass.intermediateLanguage.noSpaces must
         beEqualTo(JsonUglyfier.uglyfy("""
               |{
               | "MultipleParameterClass": {

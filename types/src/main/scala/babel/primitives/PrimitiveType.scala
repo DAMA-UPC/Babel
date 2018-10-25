@@ -11,7 +11,7 @@ import babel.Type
   */
 trait PrimitiveType[C <: Constraint] extends Type {
 
-  override lazy val structureJson: Json =
+  override lazy val intermediateLanguage: Json =
     Map("typeName" -> typeName).asJsonObject
       .add("isRequired", isRequired.asJson)
       .add("constraints", constraints.map(_.asJson).asJson)

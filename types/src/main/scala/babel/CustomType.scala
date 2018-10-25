@@ -27,13 +27,13 @@ import scala.meta._
 //object OptionalTest extends TestCompanion(isRequired = false)
 //
 //private sealed abstract class TestCompanion(override val isRequired: Boolean)
-//  extends _root_.types.Type {
+//  extends _root_.babel.Type {
 //
 //  override val typeName: String = "Test"
 //  override val isRequired: Boolean = true
 //
-//  override def structureJson: _root_.io.circe.Json = {
-//    import _root_.types._
+//  override def intermediateLanguage: _root_.io.circe.Json = {
+//    import _root_.babel._
 //    import _root_.io.circe._
 //    import _root_.io.circe.syntax._
 //    val objectTypesJson = JsonObject.fromMap(typeMap.mapValues(_.asJson)).asJson
@@ -49,11 +49,11 @@ import scala.meta._
 //    ).asJson
 //  }
 //
-//  override def toString: String = structureJson.spaces2
+//  override def toString: String = intermediateLanguage.spaces2
 //
-//  def typeMap: _root_.scala.collection.immutable.SortedMap[String, types.Type] = {
-//     import _root_.types._
-//     _root_.scala.collection.immutable.ListMap[String, types.Type](
+//  def typeMap: _root_.scala.collection.immutable.SortedMap[String, babel.Type] = {
+//     import _root_.babel._
+//     _root_.scala.collection.immutable.ListMap[String, babel.Type](
 //          ("a", Int),
 //          ("b", classOf[String]),
 //          ("c", Float),
@@ -159,7 +159,7 @@ private[babel] object MacroImpl {
 
     val newCompanionClassMethods = Seq(
       typeNameMethod(cls.name.value),
-      structureJsonMethod(cls.name, cls.ctor),
+      intermediateLanguageMethod(cls.name, cls.ctor),
       toStringMethodOverride,
       typeMapMethod(cls.ctor)
     )
@@ -181,13 +181,13 @@ private[babel] object MacroImpl {
   /**
     * Method for serializing the [[Type]] structure as a JSON.
     */
-  private[this] def structureJsonMethod(name: Name,
-                                        ctor: Ctor.Primary): Defn.Def = {
+  private[this] def intermediateLanguageMethod(name: Name,
+                                               ctor: Ctor.Primary): Defn.Def = {
 
     val className = Term.Name("\"" + name.value + "\"")
 
     q"""
-        override def structureJson : _root_.io.circe.Json = {
+        override def intermediateLanguage : _root_.io.circe.Json = {
 
           import _root_.babel._
 
@@ -221,7 +221,7 @@ private[babel] object MacroImpl {
     * Contains the toString method override.
     */
   private[this] val toStringMethodOverride: Defn.Def =
-    q"override def toString: String = structureJson.spaces2"
+    q"override def toString: String = intermediateLanguage.spaces2"
 
   private[this] def typeMapMethod(ctor: Ctor.Primary): Defn.Def = {
 

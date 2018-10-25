@@ -5,7 +5,7 @@ import io.circe.syntax._
 import org.specs2.mutable.Specification
 
 /**
-  * Tests for [[Constraint#structureJson]] method.
+  * Tests for [[Constraint#intermediateLanguage]] method.
   */
 class ConstraintSerializationSuite extends Specification {
 

@@ -17,7 +17,7 @@ trait types extends NumericTypes with TimestampTypes with TextTypes with DateTyp
     * Implicit [[Encoder]] for [[Type]].
     */
   implicit val typeEncoder: Encoder[babel.Type] =
-    (a: Type) => a.structureJson
+    (a: Type) => a.intermediateLanguage
 
   /**
     * Class representing a 'Now' in the whole framework implementation.
